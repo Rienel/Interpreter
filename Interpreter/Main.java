@@ -27,5 +27,9 @@ public class Main {
         for (Token token : tokens) {
             System.out.println(token);
         }
+
+        // to initialize parser
+        Parser parser = new Parser(tokens);
+        parser.parse();
     }
 }
