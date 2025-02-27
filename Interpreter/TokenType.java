@@ -5,10 +5,11 @@ public enum TokenType {
 
     // Variable Declarations
     MUGNA,
-    KEYWORD,
+    RESERVED_KEYWORD,
 
     //variable name
     IDENTIFIER,
+    VARIABLE,
     EXPRESSION,
     //Data Types
     DATA_TYPE,
@@ -45,13 +46,15 @@ public enum TokenType {
     DILI_BOOL, // FALSE
 
     // Symbols
-    AMPERSAND,  // &
+    CONCAT,     // &
     DOLLAR,     // $
     LBRACKET,   // [
     RBRACKET,   // ]
     COMMA,      // ,
+    ESCAPE,     // []
 
     // Assignment Operator
+    COMMENT,    // comment
     ASSIGN,     // =
 
     // End of Input

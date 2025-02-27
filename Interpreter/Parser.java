@@ -12,9 +12,9 @@ public class Parser {
         while (!isAtEnd()) {
             Token token = advance();
             
-            if (token.type == TokenType.KEYWORD && token.value.equals("MUGNA")) {
+            if (token.type == TokenType.RESERVED_KEYWORD && token.value.equals("MUGNA")) {
                 parseVariableDeclaration();
-            } else if (token.type == TokenType.KEYWORD && token.value.equals("KATAPUSAN")) {
+            } else if (token.type == TokenType.RESERVED_KEYWORD && token.value.equals("KATAPUSAN")) {
                 System.out.println("End of program detected.");
                 break;
             } else {
