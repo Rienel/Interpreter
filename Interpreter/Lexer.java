@@ -1,17 +1,35 @@
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Lexer {
+    //The patterns | regex
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
     private static final Pattern COMMENT = Pattern.compile("--.*");
     private static final Pattern RESERVED_KEYWORDS = Pattern.compile("SUGOD|KATAPUSAN|MUGNA");
+    private static final Pattern DATA_TYPE = Pattern.compile("NUMERO|LETRA|TIPIK|TINUOD");
+    private static final Pattern ASSIGNMENT_OP = Pattern.compile("=");
     private static final Pattern VARIABLE = Pattern.compile("^[a-zA-Z_][a-zA-Z0-9_]*$");
-    private static final Pattern NUMBER = Pattern.compile("\\d+");
+    private static final Pattern MULTIPLE_VARIABLE = Pattern.compile("^[a-zA-Z_][a-zA-Z0-9_]*(\\s*,\\s*[a-zA-Z_][a-zA-Z0-9_]*)*$");
+    private static final Pattern NUMERO = Pattern.compile("\\d+");
     private static final Pattern CONCAT = Pattern.compile("&");
     private static final Pattern ESCAPE = Pattern.compile("[\\[\\]]");
     private static final Pattern DOLLAR = Pattern.compile("\\$");
+
+    private static final Pattern START = Pattern.compile("SUGOD");
+    private static final Pattern END = Pattern.compile("KATAPUSAN");
+
+
+    //Line by line pattern
+    //A statement can be an expression containing many arguments (words, letters, char, et...)
+    private static final Pattern STATEMENT = Pattern.compile(
+            "^\\s*MUGNA\\s*(NUMERO|LETRA|TIPIK|TINUOD)\\s*[a-zA-Z_][a-zA-Z0-9_]*" +
+                    "|^\\s*MUGNA\\s*(NUMERO|LETRA|TIPIK|TINUOD)\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*=\\s*(\\w+|\\d+)" +
+                    "|^\\s*MUGNA\\s*(NUMERO|LETRA|TIPIK|TINUOD)\\s*[a-zA-Z_][a-zA-Z0-9_]*(\\s*,\\s*[a-zA-Z_][a-zA-Z0-9_]*)*\\s*=\\s*(\\w+|\\d+)" +
+                    "|^\\s*MUGNA\\s*(NUMERO|LETRA|TIPIK|TINUOD)\\s*[a-zA-Z_][a-zA-Z0-9_]*(\\s*,\\s*[a-zA-Z_][a-zA-Z0-9_]*)*"
+
+    );
 
     private final String input;
     private int position = 0;
@@ -20,86 +38,119 @@ public class Lexer {
         this.input = input;
     }
 
+    //Tokenization part
     public List<Token> tokenize() {
+        System.out.println(readLines(input));
+
         List<Token> tokens = new ArrayList<>();
-        while (position < input.length()) {
-            char currentChar = input.charAt(position);
+        List<String> codeLines = readLines(input);
+        List<String> choppedStatements;
 
-            // Skip whitespace
-            if (Character.isWhitespace(currentChar)) {
+        // Check if the first and last lines are "SUGOD" and "KATAPUSAN" respectively
+        if (!codeLines.getFirst().equals("SUGOD") || !codeLines.getLast().equals("KATAPUSAN")) {
+            throw new IllegalArgumentException("Should start with SUGOD and end with KATAPUSAN");
+        }
+        //Matching one line of code at a time to the given patterns
+        //A statement can be an expression containing many arguments (words, letters, char, et...)
+        while (position < codeLines.size()) {
+            String statement = codeLines.get(position);
+
+            if (START.matcher(statement).matches()) {
+                tokens.add(new Token(TokenType.RESERVED_KEYWORD, statement));
                 position++;
                 continue;
             }
-
-            // Match comments
-            if (currentChar == '-' && position + 1 < input.length() && input.charAt(position + 1) == '-') {
-                // Skip the comment line
-                String comment = readComment();
-                tokens.add(new Token(TokenType.COMMENT, comment));
-                continue;
-            }
-
-            // Match reserved keywords (SUGOD, KATAPUSAN, MUGNA)
-            if (Character.isLetter(currentChar)) {
-                String word = readWord();
-                TokenType type = getReservedWordType(word);
-                if (type != null) {
-                    tokens.add(new Token(TokenType.RESERVED_KEYWORD, word));
-                } else if (VARIABLE.matcher(word).matches()) {
-                    tokens.add(new Token(TokenType.VARIABLE, word));
-                } else {
-                    throw new IllegalArgumentException("Unknown token: " + word);
+            //The statement needs to be broken down further
+            if (STATEMENT.matcher(statement).matches()) {
+                choppedStatements = statementChop(statement);
+                //Matching the pattern
+                int i = 0;
+                while (i < choppedStatements.size()) {
+                    System.out.println(choppedStatements.get(i));
+                    if (RESERVED_KEYWORDS.matcher(choppedStatements.get(i)).matches()) {
+                        tokens.add(new Token(TokenType.RESERVED_KEYWORD, choppedStatements.get(i)));
+                    } else if (DATA_TYPE.matcher(choppedStatements.get(i)).matches()) {
+                        tokens.add(new Token(TokenType.DATA_TYPE, choppedStatements.get(i)));
+                    } else if (VARIABLE.matcher(choppedStatements.get(i)).matches()) {
+                        tokens.add(new Token(TokenType.VARIABLE, choppedStatements.get(i)));
+                    }else if (MULTIPLE_VARIABLE.matcher(choppedStatements.get(i)).matches()) {
+                        tokens.add(new Token(TokenType.VARIABLE, choppedStatements.get(i)));
+                    } else if (NUMERO.matcher(choppedStatements.get(i)).matches()) {
+                        tokens.add(new Token(TokenType.NUMERO, choppedStatements.get(i)));
+                    } else if (ASSIGNMENT_OP.matcher(choppedStatements.get(i)).matches()) {
+                        tokens.add(new Token(TokenType.ASSIGN, choppedStatements.get(i)));
+                    }
+                    i++;
                 }
-                continue;
-            }
 
-            // Match numbers
-            if (Character.isDigit(currentChar)) {
-                tokens.add(new Token(TokenType.NUMERO, readNumber()));
-                continue;
-            }
-
-            // Match concatenation operator (&)
-            if (currentChar == '&') {
-                tokens.add(new Token(TokenType.CONCAT, String.valueOf(currentChar)));
                 position++;
                 continue;
             }
 
-            // Match escape codes ([])
-            if (currentChar == '[' || currentChar == ']') {
-                tokens.add(new Token(TokenType.ESCAPE, String.valueOf(currentChar)));
+            if (END.matcher(statement).matches()) {
+                tokens.add(new Token(TokenType.RESERVED_KEYWORD, statement));
                 position++;
                 continue;
             }
-
-            // Match dollar sign ($)
-            if (currentChar == '$') {
-                tokens.add(new Token(TokenType.DOLLAR, String.valueOf(currentChar)));
-                position++;
-                continue;
-            }
-
-            // Match dollar equal (=)
-            if (currentChar == '=') {
-                tokens.add(new Token(TokenType.ASSIGN, String.valueOf(currentChar)));
-                position++;
-                continue;
-            }
-
-            throw new IllegalArgumentException("Unexpected character: " + currentChar);
+            //If the statement or line of code does not follow any of the given patterns
+            throw new IllegalArgumentException("Unexpected pattern: " + statement);
         }
 
-        // End of file token
-        tokens.add(new Token(TokenType.EOF, ""));
         return tokens;
     }
 
-    private String readWord() {
+    //Divides the code line by line and store is in a list
+    private List<String> readLines(String input) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder currentLine = new StringBuilder();
+
+        int length = input.length();
+        int pos = 0;
+
+        while (pos < length) {
+            char currentChar = input.charAt(pos);
+
+            if (currentChar == '\n') {
+                lines.add(currentLine.toString());
+                currentLine = new StringBuilder();
+            } else {
+                currentLine.append(currentChar);
+            }
+            pos++;
+        }
+        return lines;
+    }
+    //Chops the line of code into individual parts, stored in a list
+    private List<String> statementChop(String input) {
+        List<String> parts = new ArrayList<>();
         StringBuilder word = new StringBuilder();
-        while (position < input.length() && Character.isLetterOrDigit(input.charAt(position)) || input.charAt(position) == '_') {
-            word.append(input.charAt(position));
-            position++;
+
+        for (int i = 0; i < input.length(); i++) {
+            char currentChar = input.charAt(i);
+            if (Character.isWhitespace(currentChar) || currentChar == ',') {
+                if (!word.isEmpty()) {
+                    parts.add(word.toString());
+                    word.setLength(0); // Clear the StringBuilder
+                }
+            } else {
+                word.append(currentChar);
+            }
+        }
+
+        // Add the last word if there's any remaining
+        if (!word.isEmpty()) {
+            parts.add(word.toString());
+        }
+        return parts;
+    }
+
+
+    private String readWord(String input) {
+        int i =0;
+        StringBuilder word = new StringBuilder();
+        while (i < input.length() && Character.isLetterOrDigit(input.charAt(i)) || input.charAt(i) == '_') {
+            word.append(input.charAt(i));
+            i++;
         }
         return word.toString();
     }
@@ -121,6 +172,7 @@ public class Lexer {
         }
         return comment.toString();
     }
+
 
     private TokenType getReservedWordType(String word) {
         switch (word) {

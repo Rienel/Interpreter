@@ -5,11 +5,11 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         String str ="SUGOD\n" +
-                "\tMUGNA x = 5\n" +
-                "\ty = 3\n" +
-                "\tz = x & y\n" +
-                "-- This is a comment\n" +
-                "\tKATAPUSAN\n";
+                "\tMUGNA NUMERO x,z,b = 5\n" +
+                "\tMUGNA NUMERO y = 3\n" +
+                //"\tz = x & y\n" +
+                //"-- This is a comment\n" +
+                "KATAPUSAN\n";
 
         // Initialize the lexer after all input has been collected
         Lexer lexer = new Lexer(str);
