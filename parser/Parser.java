@@ -315,6 +315,12 @@ public class Parser {
                 variableDeclarationStarted = true;
                 parseHashStatement();
                 return tempStatementList;
+                case IF:
+                tempStatementList.add(parseKungStatement());
+                return tempStatementList;
+                case FOR: 
+                tempStatementList.add(parseAlangSaStatement());
+                return tempStatementList;
                 case ILLEGAL:
                     errors.add(String.format("Illegal token %s : line %d", curToken.getLiteral(), Lexer.getLine()));
                     return null;
@@ -1122,6 +1128,38 @@ public class Parser {
 
     }
 
+    private Statement parseKungStatement() {
+        consume(TokenType.IF);
+        Expression condition = parseExpression();
+        consume(TokenType.THEN);
+        BlockStatement consequence = parseBlockStatement();
+        BlockStatement alternative = null;
+        
+        if (match(TokenType.ELSE)) {
+            consume(TokenType.ELSE);
+            alternative = parseBlockStatement();
+        }
+        return new IfStatement(condition, consequence, alternative);
+    }
+
+    private Statement parseAlangSaStatement() {
+        consume(TokenType.FOR);
+        Statement initializer = parseStatement(); 
+        consume(TokenType.TO);
+        Expression condition = parseExpression();
+        consume(TokenType.DO);
+        BlockStatement body = parseBlockStatement();
+        return new ForStatement(initializer, condition, body);
+    }
+
+    private void consume(TokenType type) {
+        if (curToken.getType() == type) {
+            nextToken();
+        } else {
+            throw new RuntimeException("Expected " + type + " but got " + curToken.getType());
+        }
+    }
+
     public IntStatement parseIntStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
             errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
@@ -1386,6 +1424,11 @@ public class Parser {
         tempStatementList.add(stmt);
         return stmt;
     }
+
+
+
+
+
     public Expression parsePrefixExpression(){
        
         PrefixExpression expression = new PrefixExpression();

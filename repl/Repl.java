@@ -13,21 +13,19 @@ import evaluator.Evaluator;
 import lexer.Lexer;
 import parser.Parser;
 public class Repl {
-
     private static final String PROMPT = "Start coding here >> ";
 
-    public static void Start() throws IOException{
-
+    public static void Start() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         PrintWriter out = new PrintWriter(System.out);
         Environment env = new Environment();
 
-        for(;;){
+        for (;;) {
             out.print(PROMPT);
             out.flush();
 
             String line = in.readLine();
-            if(line == null){
+            if (line == null || line.equalsIgnoreCase("EXIT")) {
                 break;
             }
 
@@ -40,32 +38,23 @@ public class Repl {
                 e.printStackTrace();
             }
 
-            if(p.getErrors().size() != 0){
+            if (p.getErrors().size() != 0) {
                 printParserErrors(out, p.getErrors());
             }
 
             Object evaluated = Evaluator.eval(program, env);
-            if(evaluated != null){
+            if (evaluated != null) {
                 out.println(evaluated.inspect());
             }
-            
             out.flush();
-            
-
-
         }
         in.close();
         out.close();
     }
 
-    private static void printParserErrors(PrintWriter out, List<String> errors){
-        for(String msg: errors){
+    private static void printParserErrors(PrintWriter out, List<String> errors) {
+        for (String msg : errors) {
             out.println("\t" + msg);
         }
     }
-    
-        
-    
-
-    
 }
