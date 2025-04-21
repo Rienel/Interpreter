@@ -7,6 +7,7 @@ public class Token {
     private TokenType tokenType;
     private String literal;
     private final Map<String, TokenType> keywords;
+    private int line;
 
     public Token(TokenType tokenType, String literal){
         this.tokenType = tokenType;
@@ -29,14 +30,17 @@ public class Token {
         keywords.put("KATAPUSAN", TokenType.END);
         keywords.put("IPAKITA", TokenType.DISPLAY);
         keywords.put("DAWAT", TokenType.SCAN);
-        keywords.put("IF", TokenType.IF);
-        keywords.put("ELSE", TokenType.ELSE);
+        keywords.put("KUNG", TokenType.IF);
+        keywords.put("KUNG WALA", TokenType.ELSE);
+        keywords.put("KUNG DILI", TokenType.ELSEIF);
         keywords.put("UG", TokenType.AND);
         keywords.put("O", TokenType.OR);
         keywords.put("DILI", TokenType.NOT);
-        keywords.put("WHILE", TokenType.WHILE);
-        keywords.put("RETURN", TokenType.RETURN);
-        keywords.put("HASH", tokenType.HASH);
+        keywords.put("ALANG SA", TokenType.FOR);
+        keywords.put("PUNDOK", TokenType.BLOCK);
+        // keywords.put("WHILE", TokenType.WHILE);
+        keywords.put("BALIK", TokenType.RETURN);
+        // keywords.put("HASH", tokenType.HASH); not used
     }
 
     public TokenType lookupIdent(String ident){
@@ -62,5 +66,13 @@ public class Token {
 
     public String toString(){
         return "Token{" + "type = \"" + tokenType + "\" literal = \"" +  literal + "\"}";
+    }
+
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    public int getLine() {
+        return line;
     }
 }

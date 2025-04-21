@@ -126,14 +126,17 @@ public class Lexer {
                 break;
             case '[':
                 readChar();
-                char lit = ch;
-                readChar();
-                if(ch == ']'){
+                if (ch == 0) {
+                    tok = newToken(TokenType.ILLEGAL, "Unexpected end of input after '['");
+                } else {   
+                    char lit = ch;
                     readChar();
-                    return newToken(TokenType.ESCAPE, lit);
-                }
-                return newToken(TokenType.ILLEGAL, ch);
-                
+                    if (ch == ']') {
+                        tok = newToken(TokenType.ESCAPE, String.valueOf(lit));
+                    } else { 
+                        tok = newToken(TokenType.ILLEGAL, "Expected closing bracket']'");
+                    }
+                break;
             case '\'':
                 readChar();
                 char tempCh = ch;
@@ -241,7 +244,7 @@ public class Lexer {
     private String readBoolean(){
         readChar();
         int tempPosition = position;
-        while(ch != '"'){
+        while(ch != '"' && ch != 0){ // will crash if '"' is unmatched
             readChar();
         }
         
@@ -251,11 +254,14 @@ public class Lexer {
 
     private String readNumber(){
         int tempPosition = position;
-        while(isDigit(ch) || ch == '.'){
+        int dotCount = 0;
+    
+        while(isDigit(ch) || ch == '.') {
+            if (ch == '.') dotCount++;
+            if (dotCount > 1) break;
             readChar();
         }
-        
-
+    
         return input.substring(tempPosition, position);
     }
 
@@ -299,8 +305,8 @@ public class Lexer {
         }
     }
 
-    public static Token newToken(TokenType tokenType, char ch){
-        return new Token(tokenType, String.valueOf(ch));
+    public static Token newToken(TokenType tokenType, String literal){
+        return new Token(tokenType, literal);
     }
 
     public String getInput() {
