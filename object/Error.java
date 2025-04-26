@@ -17,7 +17,7 @@ public class Error implements Object{
 
     @Override
     public String inspect() {
-        return "ERROR: " + message;
+        return "" + message;
     }
 
     @Override

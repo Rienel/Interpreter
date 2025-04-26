@@ -315,12 +315,12 @@ public class Parser {
                 variableDeclarationStarted = true;
                 parseHashStatement();
                 return tempStatementList;
-                case IF:
-                tempStatementList.add(parseKungStatement());
-                return tempStatementList;
-                case FOR: 
-                tempStatementList.add(parseAlangSaStatement());
-                return tempStatementList;
+//                case IF:
+////                tempStatementList.add(parseKungStatement());
+//                return tempStatementList;
+//                case FOR:
+//                tempStatementList.add(parseAlangSaStatement());
+//                return tempStatementList;
                 case ILLEGAL:
                     errors.add(String.format("Illegal token %s : line %d", curToken.getLiteral(), Lexer.getLine()));
                     return null;
@@ -787,7 +787,7 @@ public class Parser {
         if(statementsList.containsKey(curToken.getLiteral())){
             idents.add(curToken.getLiteral());
         }else {
-            errors.add(String.format("Identifier %s does not exist : line %d", curToken.getLiteral(), Lexer.getLine()));
+            errors.add(String.format("Identifier %s does not exist", curToken.getLiteral()));
             return null;
         }
 
@@ -800,7 +800,7 @@ public class Parser {
             if(statementsList.containsKey(curToken.getLiteral())){
                 idents.add(curToken.getLiteral());
             }else {
-                errors.add(String.format("Identifier %s does not exist : line %d", curToken.getLiteral(), Lexer.getLine()));
+                errors.add(String.format("Identifier %s does not exist", curToken.getLiteral()));
                 return null;
             }
         }
@@ -838,8 +838,8 @@ public class Parser {
         List<Expression> expressions = new ArrayList<>();
         String line = "";
         
-        System.out.println("Enter Input: ");
-        System.out.print(">> ");
+        System.out.println("Input: ");
+        System.out.print(" ");
         try {
             line = bufferedReader.readLine();
         } catch (IOException e) {
@@ -1020,7 +1020,7 @@ public class Parser {
         }
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use : %d", ident.getValue(), Lexer.getLine()));
+            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
             return null;
         }
         stmt.setName(ident);
@@ -1036,7 +1036,7 @@ public class Parser {
                     is.setToken(curToken);
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
-                        errors.add(String.format("Identifier %s is already in use : line %d", ident.getValue(), Lexer.getLine()));
+                        errors.add(String.format("Identifier %s is already in use", ident.getValue()));
                         return null;
                     }
                     is.setName(tempIdent);
@@ -1087,7 +1087,7 @@ public class Parser {
             return null;
         }
         if(!hasStarted){
-            errors.add(String.format("Program should start with %s, got = %s : line ", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
+            errors.add(String.format("Program should start with %s, got = %s : line ", "SUGOD", curToken.getLiteral()));
             return null;
         }
         HashStatement stmt = new HashStatement();
@@ -1104,7 +1104,7 @@ public class Parser {
 
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use : line %d", ident.getValue(), Lexer.getLine()));
+            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
             return null;
         }
 
@@ -1128,37 +1128,37 @@ public class Parser {
 
     }
 
-    private Statement parseKungStatement() {
-        consume(TokenType.IF);
-        Expression condition = parseExpression();
-        consume(TokenType.THEN);
-        BlockStatement consequence = parseBlockStatement();
-        BlockStatement alternative = null;
-        
-        if (match(TokenType.ELSE)) {
-            consume(TokenType.ELSE);
-            alternative = parseBlockStatement();
-        }
-        return new IfStatement(condition, consequence, alternative);
-    }
+//    private Statement parseKungStatement() {
+//        consume(TokenType.IF);
+//        Expression condition = parseExpression();
+//        consume(TokenType.THEN);
+//        BlockStatement consequence = parseBlockStatement();
+//        BlockStatement alternative = null;
+//
+//        if (match(TokenType.ELSE)) {
+//            consume(TokenType.ELSE);
+//            alternative = parseBlockStatement();
+//        }
+//        return new IfStatement(condition, consequence, alternative);
+//    }
 
-    private Statement parseAlangSaStatement() {
-        consume(TokenType.FOR);
-        Statement initializer = parseStatement(); 
-        consume(TokenType.TO);
-        Expression condition = parseExpression();
-        consume(TokenType.DO);
-        BlockStatement body = parseBlockStatement();
-        return new ForStatement(initializer, condition, body);
-    }
-
-    private void consume(TokenType type) {
-        if (curToken.getType() == type) {
-            nextToken();
-        } else {
-            throw new RuntimeException("Expected " + type + " but got " + curToken.getType());
-        }
-    }
+//    private Statement parseAlangSaStatement() {
+//        consume(TokenType.FOR);
+//        Statement initializer = parseStatement();
+//        consume(TokenType.TO);
+//        Expression condition = parseExpression();
+//        consume(TokenType.DO);
+//        BlockStatement body = parseBlockStatement();
+//        return new ForStatement(initializer, condition, body);
+//    }
+//
+//    private void consume(TokenType type) {
+//        if (curToken.getType() == type) {
+//            nextToken();
+//        } else {
+//            throw new RuntimeException("Expected " + type + " but got " + curToken.getType());
+//        }
+//    }
 
     public IntStatement parseIntStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
@@ -1183,7 +1183,7 @@ public class Parser {
         
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use : line %d", ident.getValue(), Lexer.getLine()));
+            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
             return null;
         }
 
@@ -1201,7 +1201,7 @@ public class Parser {
                     
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
-                        errors.add(String.format("Identifier %s is already in use : line %d", tempIdent.getValue(),Lexer.getLine()));
+                        errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
                         return null;
                     }
                     is.setName(tempIdent);
@@ -1277,7 +1277,7 @@ public class Parser {
         
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use : line %d", ident.getValue(), Lexer.getLine()));
+            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
             return null;
         }
         stmt.setName(ident);
@@ -1293,7 +1293,7 @@ public class Parser {
                     is.setToken(curToken);
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
-                        errors.add(String.format("Identifier %s is already in use: line %d", tempIdent.getValue(), Lexer.getLine()));
+                        errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
                         return null;
                     }
                     temp.add(is);
@@ -1342,11 +1342,11 @@ public class Parser {
     
     public BoolStatement parseBoolStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+            errors.add("More than one statement per line is not allowed." + Lexer.getLine());
             return null;
         }
         if(!hasStarted){
-            errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(),Lexer.getLine()));
+            errors.add(String.format("Program should start with %s", "SUGOD", curToken.getLiteral()));
             return null;
         }
         BoolStatement stmt = new BoolStatement();
@@ -1362,7 +1362,7 @@ public class Parser {
         }
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use : line %d", ident.getValue(), Lexer.getLine()));
+            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
             return null;
         }
         stmt.setName(ident);
@@ -1378,7 +1378,7 @@ public class Parser {
                     is.setToken(curToken);
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
-                        errors.add(String.format("Identifier %s is already in use : line %d", tempIdent.getValue(), Lexer.getLine()));
+                        errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
                         return null;
                     }
                     temp.add(is);
@@ -1528,19 +1528,19 @@ public class Parser {
 
     public void noPrefixParseFNError(TokenType t){
 
-        String msg = String.format("Invalid token: %s found: line %d", t.getLiteral(), Lexer.getLine());
+        String msg = String.format("Invalid token at line %d", Lexer.getLine());
 
 
         errors.add(msg);
     }
 
     private void peekError(TokenType t){
-        String msg = String.format("Error at line %d: expected next token to be %s, got %s instead",Lexer.getLine(), t, peekToken.getTokenType());
+        String msg = String.format("%d: expected to be %s",Lexer.getLine(), peekToken.getTokenType());
         errors.add(msg);
     }
 
     private void identifierMismatchError(String expected, String got){
-        String msg = String.format("Identifer mismatch: expected = %s, got = %s",expected,got);
+        String msg = String.format("Identifer mismatch: %s",expected);
         errors.add(msg);
         
     }   
@@ -1551,17 +1551,17 @@ public class Parser {
     }
 
     private void endCodeError(TokenType t){
-        String msg = String.format("expected token %s, got %s : line %d", t, curToken.getTokenType(), Lexer.getLine());
+        String msg = String.format("expected token %s %s", t, curToken.getTokenType());
         errors.add(msg);
     }
 
     private void typeConversionError(TokenType t){
-        String msg = String.format("Type conversion error, expected %s, got %s", t, curToken.getTokenType() );
+        String msg = String.format("Type conversion error %s %s", t, curToken.getTokenType() );
         errors.add(msg);
     }
 
     private void typeConversionError(String t){
-        String msg = String.format("Type conversion error, expected %s, got% s", t, curToken.getTokenType() );
+        String msg = String.format("Type conversion error %s %s", t, curToken.getTokenType() );
         errors.add(msg);
     }
 

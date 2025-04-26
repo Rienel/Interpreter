@@ -5,7 +5,7 @@ public enum TokenType {
     EOF("EOF"),
 
     //Identifiers + literals
-    IDENT("IDENT"),
+    IDENT("IDENTIFIER"),
     INTEGER("INTEGER"),
     FLOATINGPOINT("FLOATINGPOINT"),
     TRUE("OO"),

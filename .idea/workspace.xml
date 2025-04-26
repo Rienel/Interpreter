@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61f566a9-531b-47a9-b658-5a89b9f7959b" name="Changes" comment="" />
+    <list default="true" id="61f566a9-531b-47a9-b658-5a89b9f7959b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main.code" beforeDir="false" afterPath="$PROJECT_DIR$/Main.code" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/object/Error.java" beforeDir="false" afterPath="$PROJECT_DIR$/object/Error.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/Main.code" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/Main.code" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/Error.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/object/Error.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/repl/Repl.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/repl/Repl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/token/TokenType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/token/TokenType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/parser/Parser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/token/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/token/TokenType.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,7 +30,6 @@
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="2uUWrSzDvXaVepP7du06Y1mXVNJ" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -26,9 +38,18 @@
   "keyToString": {
     "Application.Main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true"
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "settings.sync",
+    "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
     "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
@@ -51,6 +72,14 @@
       </method>
     </configuration>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -59,6 +88,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1742303832058</updated>
+      <workItem from="1745281552168" duration="5512000" />
+      <workItem from="1745289498239" duration="83000" />
     </task>
     <task id="LOCAL-00001" summary="Added MUGNA">
       <option name="closed" value="true" />
@@ -70,6 +101,20 @@
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added MUGNA" />
