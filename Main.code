@@ -3,14 +3,20 @@ SUGOD
     DAWAT: edad
     KUNG (edad >= 18)
     PUNDOK{
-        IPAKITA: "Legal Age"
+        IPAKITA: "Adult"
     }
     KUNG DILI (edad >= 13)
     PUNDOK{
         IPAKITA: "Teen"
     }
-    KUNG WALA
+    KUNG DILI (edad >= 6)
     PUNDOK{
         IPAKITA: "Child"
     }
+    KUNG WALA
+    PUNDOK{
+        IPAKITA: "Toddler"
+    }
 KATAPUSAN
+
+// LATEST

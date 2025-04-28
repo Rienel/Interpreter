@@ -948,33 +948,36 @@ public class Parser {
 
 
 
-    private BlockStatement parseBlockStatement(String type) throws Exception{
+    private BlockStatement parseBlockStatement(String type) throws Exception {
         BlockStatement bs = new BlockStatement();
-        bs.setToken(curToken);
+        bs.setToken(curToken); // SUGOD for main program
+        nextToken(); // Move past SUGOD
 
-        nextToken();
-
-        while(!curTokenIs(TokenType.END)){
-            if(curTokenIs(TokenType.EOF)){
-                endCodeError(TokenType.END);
+        while (!curTokenIs(TokenType.END)) {
+            if (curTokenIs(TokenType.EOF)) {
+                errors.add("Expected KATAPUSAN, found EOF at line " + Lexer.getLine());
                 return null;
             }
+//            System.out.println("Parsing statement, current token: " + curToken);
             List<Statement> stmt = parseStatement();
-            if(stmt != null){
-                for(Statement statement: stmt){
+            if (stmt != null) {
+                for (Statement statement : stmt) {
                     bs.addStatement(statement);
                 }
+            } else {
+                errors.add("Failed to parse statement at line " + Lexer.getLine());
+                nextToken();
+                continue;
             }
-
             nextToken();
         }
 
-        nextToken();
-        if(type.equals("KATAPUSAN")){
+//        System.out.println("Reached KATAPUSAN: " + curToken);
+        hasEnded = true; // Set for KATAPUSAN
+        nextToken(); // Consume KATAPUSAN
 
-            hasEnded = true;
-        }else if(type.equals("IF")){
-            ifStarted = false;
+        if (type.equals("IF")) {
+            ifStarted = false; // Reset for IF blocks
         }
 
         return bs;

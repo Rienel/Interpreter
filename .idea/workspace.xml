@@ -7,26 +7,9 @@
     <list default="true" id="61f566a9-531b-47a9-b658-5a89b9f7959b" name="Changes" comment="fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.code" beforeDir="false" afterPath="$PROJECT_DIR$/Main.code" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ast/IfExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/ast/IfExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lexer/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/lexer/Lexer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/Main.code" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/Main.code" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser$OperatorType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$InfixTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$PrecedenceTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$PrefixTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$StatementsTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$TestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/PrefixParseFn.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/repl/Reader.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/repl/Repl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/token/Token.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/token/Token.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/token/TokenType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/token/TokenType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/parser/Parser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/token/Token.java" beforeDir="false" afterPath="$PROJECT_DIR$/token/Token.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/token/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/token/TokenType.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
