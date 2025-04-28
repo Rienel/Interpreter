@@ -1,6 +1,16 @@
 SUGOD
-    NUMERO a = 3, b = 4, c, d
-	DAWAT: c
-	d = (3 + 4) * c
-	IPAKITA: d
+    MUGNA NUMERO edad
+    DAWAT: edad
+    KUNG (edad >= 18)
+    PUNDOK{
+        IPAKITA: "Legal Age"
+    }
+    KUNG DILI (edad >= 13)
+    PUNDOK{
+        IPAKITA: "Teen"
+    }
+    KUNG WALA
+    PUNDOK{
+        IPAKITA: "Child"
+    }
 KATAPUSAN

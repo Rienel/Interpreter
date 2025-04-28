@@ -19,7 +19,7 @@ public class Token {
         initKeywords();
     }
 
-    private void initKeywords(){
+    private void initKeywords() {
         keywords.put("MUGNA", TokenType.MUGNA);
         keywords.put("LETRA", TokenType.CHAR);
         keywords.put("NUMERO", TokenType.INT);
@@ -29,14 +29,14 @@ public class Token {
         keywords.put("KATAPUSAN", TokenType.END);
         keywords.put("IPAKITA", TokenType.DISPLAY);
         keywords.put("DAWAT", TokenType.SCAN);
-        keywords.put("IF", TokenType.IF);
-        keywords.put("ELSE", TokenType.ELSE);
+        keywords.put("KUNG", TokenType.IF);
+        keywords.put("PUNDOK", TokenType.PUNDOK);
         keywords.put("UG", TokenType.AND);
         keywords.put("O", TokenType.OR);
         keywords.put("DILI", TokenType.NOT);
         keywords.put("WHILE", TokenType.WHILE);
         keywords.put("RETURN", TokenType.RETURN);
-        keywords.put("HASH", tokenType.HASH);
+        keywords.put("HASH", TokenType.HASH);
     }
 
     public TokenType lookupIdent(String ident){

@@ -23,7 +23,7 @@ public class Lexer {
         this.ch = '\0';
     }
 
-    
+
 
     public void readChar(){
         if(readPosition >= input.length()){
@@ -37,7 +37,7 @@ public class Lexer {
     }
 
     public void unreadChar() {
-        if (position > 0) { // Ensure we don't move before the start of input
+        if (position > 0) {
             readPosition--;
             position--;
             ch = input.charAt(position);
@@ -47,7 +47,7 @@ public class Lexer {
     public Token nextToken(){
         Token tok = new Token();
 
-        
+
         skipWhiteSpace();
 
         switch (ch) {
@@ -103,7 +103,7 @@ public class Lexer {
                     tok.setTokenType(TokenType.LESSEQ);
                 }else if(peekChar() == '>'){
                     char tempCh = ch;
-                    
+
                     readChar();
                     String finalLiteral = Character.toString(tempCh) + Character.toString(ch);
                     tok.setLiteral(finalLiteral);
@@ -133,7 +133,7 @@ public class Lexer {
                     return newToken(TokenType.ESCAPE, lit);
                 }
                 return newToken(TokenType.ILLEGAL, ch);
-                
+
             case '\'':
                 readChar();
                 char tempCh = ch;
@@ -145,7 +145,7 @@ public class Lexer {
                     tok = newToken(TokenType.ILLEGAL, ch);
                 }
                 break;
-            
+
             case '\"':
                 tok.setLiteral(readBoolean());
                 if(tok.getLiteral().equals("OO")){
@@ -167,11 +167,11 @@ public class Lexer {
             case '|':
                 tok.setLiteral("|");
                 tok.setTokenType(TokenType.INDEXOPEN);
-                break;         
+                break;
             case '\\':
                 tok.setLiteral("\\");
                 tok.setTokenType(TokenType.INDEXCLOSE);
-                break;                           
+                break;
             case 0:
                 tok.setLiteral("");
                 tok.setTokenType(TokenType.EOF);
@@ -188,7 +188,7 @@ public class Lexer {
                         tok.setTokenType(TokenType.FLOATINGPOINT);
 
                     }else{
-                        
+
                         tok.setTokenType(TokenType.INTEGER);
                     }
                     // System.out.println(tok);
@@ -244,7 +244,7 @@ public class Lexer {
         while(ch != '"'){
             readChar();
         }
-        
+
         return input.substring(tempPosition, position);
     }
 
@@ -254,7 +254,7 @@ public class Lexer {
         while(isDigit(ch) || ch == '.'){
             readChar();
         }
-        
+
 
         return input.substring(tempPosition, position);
     }

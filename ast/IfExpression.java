@@ -14,13 +14,13 @@ public class IfExpression implements Expression{
     List<BlockStatement> elseConsequences;
     BlockStatement alternative;
 
-    
+
 
     public IfExpression() {
         elseConditions = new ArrayList<>();
         elseConsequences = new ArrayList<>();
     }
-    
+
 
     public IfExpression(Token token, Expression condition, BlockStatement consequence, BlockStatement alternative) {
         this.token = token;
@@ -31,12 +31,12 @@ public class IfExpression implements Expression{
         elseConsequences = new ArrayList<>();
     }
 
-    
+
 
     @Override
     public void expressionNode() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -109,7 +109,7 @@ public class IfExpression implements Expression{
     public List<BlockStatement> getElseConsequences() {
         return elseConsequences;
     }
-    public void addElseConsequene(BlockStatement bs){
+    public void addElseConsequence(BlockStatement bs){
         elseConsequences.add(bs);
     }
 
@@ -117,5 +117,5 @@ public class IfExpression implements Expression{
     public void setElseConsequences(List<BlockStatement> elseConsequences) {
         this.elseConsequences = elseConsequences;
     }
-    
+
 }

@@ -26,8 +26,8 @@ public class Parser {
     private List<String> errors;
     private Map<TokenType, PrefixParseFn> prefixParseFns;
     private Map<TokenType, InfixParseFn> infixParseFns;
-    private Map<TokenType, Integer> infixPrecedences; 
-    private Map<String, Statement> statementsList; 
+    private Map<TokenType, Integer> infixPrecedences;
+    private Map<String, Statement> statementsList;
     private Boolean hasStarted;
     private Boolean variableDeclarationStarted;
     private Boolean executableStarted;
@@ -41,7 +41,7 @@ public class Parser {
 
 
     public enum OperatorType{
-        
+
         LOWEST(1),
         LOGICAL(2),
         EQUALS(3),
@@ -50,7 +50,7 @@ public class Parser {
         PRODUCT(6),
         PREFIX(7),
         INDEX(8);
-        
+
         private final int precedence;
         OperatorType(int precedence){
             this.precedence = precedence;
@@ -61,8 +61,8 @@ public class Parser {
         }
     }
     private List<String> reservedWords;
-    
-   
+
+
 
     public Parser(Lexer lexer){
         tempStatementList = new ArrayList<>();
@@ -87,7 +87,7 @@ public class Parser {
         nextToken();
         nextToken();
 
-        
+
 
     }
 
@@ -107,7 +107,7 @@ public class Parser {
         infixPrecedences.put(TokenType.OR, OperatorType.LOGICAL.getPrecedence());
         infixPrecedences.put(TokenType.NOT, OperatorType.LOWEST.getPrecedence());
         infixPrecedences.put(TokenType.INDEXOPEN, OperatorType.INDEX.getPrecedence());
-        
+
     }
 
     private void initReservedWords(){
@@ -165,27 +165,25 @@ public class Parser {
         peekToken = lexer.nextToken();
     }
 
-    
 
 
-    public Program ParseProgram() throws Exception{
-        
-    
-        while(curToken.getTokenType() != TokenType.EOF){
+
+    public Program ParseProgram() throws Exception {
+        while (!curTokenIs(TokenType.EOF)) {
             List<Statement> stmt = parseStatement();
-            if(stmt != null){
-                for(Statement statement: stmt){
+            if (stmt != null) {
+                for (Statement statement : stmt) {
                     program.addStatement(statement);
                 }
             }
             nextToken();
         }
-        
-
+        if (!hasEnded) {
+            errors.add("Expected KATAPUSAN at end of program");
+        }
         return program;
-        
-
     }
+
     public Expression parseString(){
         String str = curToken.getLiteral();
         return new StringValue(curToken, str);
@@ -203,12 +201,12 @@ public class Parser {
     public Expression parseCharacter(){
         return new CharacterExpression(curToken, curToken.getLiteral().charAt(0));
     }
-    
+
     public Expression parseHashLiteral(){
         HashLiteral hash = new HashLiteral();
         hash.setToken(curToken);
         Map<Expression, Expression> tempMap = new HashMap<>();
-        
+
         while(!peekTokenIs(TokenType.RBRACE)){
             nextToken();
             try {
@@ -218,7 +216,7 @@ public class Parser {
                 }
                 nextToken();
                 Expression value = parseExpression(OperatorType.LOWEST.getPrecedence());
-                
+
                 tempMap.put(key, value);
 
                 if(!peekTokenIs(TokenType.RBRACE) && !expectPeek(TokenType.COMMA)){
@@ -263,85 +261,102 @@ public class Parser {
 
 
     public List<Statement> parseStatement() throws Exception {
-        if(hasEnded){
+        if (hasEnded) {
             errors.add(String.format("Error: token %s found after END CODE : line %d", curToken.getLiteral(), Lexer.getLine()));
             return null;
         }
-           tempStatementList = new ArrayList<>();
-
-
-            switch (curToken.getTokenType()){
-                case RETURN:
-                    parseReturnStatement();
-                    return tempStatementList;
-                case CHAR:
-                    if(executableStarted){
-                        errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
+        tempStatementList = new ArrayList<>();
+        switch (curToken.getTokenType()) {
+            case MUGNA:
+                if (executableStarted) {
+                    errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
+                    return null;
+                }
+                variableDeclarationStarted = true;
+                nextToken(); // Move to type (e.g., NUMERO)
+                switch (curToken.getTokenType()) {
+                    case INT:
+                        parseIntStatement();
+                        break;
+                    case CHAR:
+                        parseCharStatement();
+                        break;
+                    case BOOL:
+                        parseBoolStatement();
+                        break;
+                    case FLOAT:
+                        parseFloatStatement();
+                        break;
+                    case HASH:
+                        parseHashStatement();
+                        break;
+                    default:
+                        errors.add("Unknown data type after MUGNA at line " + Lexer.getLine());
                         return null;
-                    }
-                    variableDeclarationStarted = true;
-                    parseCharStatement();
-                    return tempStatementList;
-                case INT:
-                if(executableStarted){
+                }
+                return tempStatementList;
+            case RETURN:
+                parseReturnStatement();
+                return tempStatementList;
+            case CHAR:
+                if (executableStarted) {
+                    errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
+                    return null;
+                }
+                variableDeclarationStarted = true;
+                parseCharStatement();
+                return tempStatementList;
+            case INT:
+                if (executableStarted) {
                     errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
                     return null;
                 }
                 variableDeclarationStarted = true;
                 parseIntStatement();
-
                 return tempStatementList;
-                case BOOL:
-                if(executableStarted){
+            case BOOL:
+                if (executableStarted) {
                     errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
                     return null;
                 }
                 parseBoolStatement();
                 variableDeclarationStarted = true;
                 return tempStatementList;
-                case FLOAT:
-                if(executableStarted){
+            case FLOAT:
+                if (executableStarted) {
                     errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
                     return null;
                 }
                 variableDeclarationStarted = true;
                 parseFloatStatement();
                 return tempStatementList;
-                case HASH:
-                if(executableStarted){
+            case HASH:
+                if (executableStarted) {
                     errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
                     return null;
                 }
                 variableDeclarationStarted = true;
                 parseHashStatement();
                 return tempStatementList;
-//                case IF:
-////                tempStatementList.add(parseKungStatement());
-//                return tempStatementList;
-//                case FOR:
-//                tempStatementList.add(parseAlangSaStatement());
-//                return tempStatementList;
-                case ILLEGAL:
-                    errors.add(String.format("Illegal token %s : line %d", curToken.getLiteral(), Lexer.getLine()));
-                    return null;
-                default:
-                    if(curTokenIs(TokenType.IDENT) && peekTokenIs(TokenType.ASSIGN)){
-                        parseReassignment();
-                        return tempStatementList;
-                    }
-                    List<Statement> tempExp = new ArrayList<>();
-                    tempExp.add(parseExpressionStatement());
-                    return tempExp;
-                
-            }
-        
+            case ILLEGAL:
+                errors.add(String.format("Illegal token %s : line %d", curToken.getLiteral(), Lexer.getLine()));
+                return null;
+            default:
+                if (curTokenIs(TokenType.IDENT) && peekTokenIs(TokenType.ASSIGN)) {
+                    parseReassignment();
+                    return tempStatementList;
+                }
+                List<Statement> tempExp = new ArrayList<>();
+                tempExp.add(parseExpressionStatement());
+                return tempExp;
+        }
     }
 
     private void parseReassignment(){
         String ident = curToken.getLiteral();
         executableStarted = true;
         if(statementsList.containsKey(curToken.getLiteral())){
-            
+
             if(statementsList.get(ident) instanceof IntStatement){
                 List<IntStatement> temp = new ArrayList<>();
                 IntStatement newStmt = new IntStatement();
@@ -361,7 +376,7 @@ public class Parser {
                         nextToken();
                     }
                     try{
-                        
+
                         Expression value = parseExpression(OperatorType.LOWEST.getPrecedence());
                         for(IntStatement x: temp){
                             x.setValue(value);
@@ -372,147 +387,147 @@ public class Parser {
                     }
                     return;
                 }
-                            
+
                 try {
                     newStmt.setValue(parseExpression(OperatorType.LOWEST.getPrecedence()));
                 } catch (Exception e) {
                     e.printStackTrace();
-                        
+
                 }
                 tempStatementList.add(newStmt);
-                
+
             }else if(statementsList.get(ident) instanceof FloatStatement){
-                    List<FloatStatement> temp = new ArrayList<>();
-                    FloatStatement newStmt = new FloatStatement();
-                    Token token = new Token(TokenType.FLOAT, "FLOAT");
-                    newStmt.setToken(token);
-                    newStmt.setName(new Identifier(token, ident));
-                   
-                    nextToken();
-                    nextToken();
-                    if(peekTokenIs(TokenType.ASSIGN)){
-                        temp.add(newStmt);
-                        while(peekTokenIs(TokenType.ASSIGN)){
-                            FloatStatement is = new FloatStatement();
-                            is.setName(new Identifier(curToken, curToken.getLiteral()));
-                            is.setToken(curToken);
-                            temp.add(is);
-                            nextToken();
-                            nextToken();
-                        }
-                        try{
-                            
-                            Expression value = parseExpression(OperatorType.LOWEST.getPrecedence());
-                            for(FloatStatement x: temp){
-                                x.setValue(value);
-                                tempStatementList.add(x);
-                            }
-                        }catch(Exception e){
-                            e.printStackTrace();
-                        }
-                        return;
-                    }
-                                
-                    try {
-                        newStmt.setValue(parseExpression(OperatorType.LOWEST.getPrecedence()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                            
-                    }
-                    tempStatementList.add(newStmt);
-                   
-                
-            }else if(statementsList.get(ident) instanceof BoolStatement){
-                    List<BoolStatement> temp = new ArrayList<>();
-                    BoolStatement newStmt = new BoolStatement();
-                    Token token = new Token(TokenType.BOOL, "BOOL");
-                    newStmt.setToken(token);
-                    newStmt.setName(new Identifier(token, ident));
-                    
-                    nextToken();
-                    nextToken();
+                List<FloatStatement> temp = new ArrayList<>();
+                FloatStatement newStmt = new FloatStatement();
+                Token token = new Token(TokenType.FLOAT, "FLOAT");
+                newStmt.setToken(token);
+                newStmt.setName(new Identifier(token, ident));
 
-                    if(peekTokenIs(TokenType.ASSIGN)){
-                        temp.add(newStmt);
-                        while(peekTokenIs(TokenType.ASSIGN)){
-                            BoolStatement is = new BoolStatement();
-                            is.setName(new Identifier(curToken, curToken.getLiteral()));
-                            is.setToken(curToken);
-                            temp.add(is);
-                            nextToken();
-                            nextToken();
-                        }
-                        try{
-                            
-                            Expression value = parseExpression(OperatorType.LOWEST.getPrecedence());
-                            for(BoolStatement x: temp){
-                                x.setValue(value);
-                                tempStatementList.add(x);
-                            }
-                        }catch(Exception e){
-                            e.printStackTrace();
-                        }
-                        return;
+                nextToken();
+                nextToken();
+                if(peekTokenIs(TokenType.ASSIGN)){
+                    temp.add(newStmt);
+                    while(peekTokenIs(TokenType.ASSIGN)){
+                        FloatStatement is = new FloatStatement();
+                        is.setName(new Identifier(curToken, curToken.getLiteral()));
+                        is.setToken(curToken);
+                        temp.add(is);
+                        nextToken();
+                        nextToken();
                     }
-                                
-                    try {
-                        newStmt.setValue(parseExpression(OperatorType.LOWEST.getPrecedence()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                            
-                    }
-                    tempStatementList.add(newStmt);
-                    
-                
-                
-            }else if(statementsList.get(ident) instanceof CharStatement){
-                    List<CharStatement> temp = new ArrayList<>();
-                    CharStatement newStmt = new CharStatement();
-                    Token token = new Token(TokenType.CHAR, "CHAR");
-                    newStmt.setToken(token);
-                    newStmt.setName(new Identifier(token, ident));
-                    nextToken();
-                    nextToken();
+                    try{
 
-                    if(peekTokenIs(TokenType.ASSIGN)){
-                        temp.add(newStmt);
-                        while(peekTokenIs(TokenType.ASSIGN)){
-                            CharStatement is = new CharStatement();
-                            is.setName(new Identifier(curToken, curToken.getLiteral()));
-                            is.setToken(curToken);
-                            temp.add(is);
-                            nextToken();
-                            nextToken();
+                        Expression value = parseExpression(OperatorType.LOWEST.getPrecedence());
+                        for(FloatStatement x: temp){
+                            x.setValue(value);
+                            tempStatementList.add(x);
                         }
-                        try{
-                            
-                            Expression value = parseExpression(OperatorType.LOWEST.getPrecedence());
-                            for(CharStatement x: temp){
-                                x.setValue(value);
-                                tempStatementList.add(x);
-                            }
-                        }catch(Exception e){
-                            e.printStackTrace();
-                        }
-                        return;
-                    }
-                                
-                    try {
-                        newStmt.setValue(parseExpression(OperatorType.LOWEST.getPrecedence()));
-                    } catch (Exception e) {
+                    }catch(Exception e){
                         e.printStackTrace();
-                            
                     }
-                    tempStatementList.add(newStmt);
-                    
+                    return;
                 }
+
+                try {
+                    newStmt.setValue(parseExpression(OperatorType.LOWEST.getPrecedence()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+                tempStatementList.add(newStmt);
+
+
+            }else if(statementsList.get(ident) instanceof BoolStatement){
+                List<BoolStatement> temp = new ArrayList<>();
+                BoolStatement newStmt = new BoolStatement();
+                Token token = new Token(TokenType.BOOL, "BOOL");
+                newStmt.setToken(token);
+                newStmt.setName(new Identifier(token, ident));
+
+                nextToken();
+                nextToken();
+
+                if(peekTokenIs(TokenType.ASSIGN)){
+                    temp.add(newStmt);
+                    while(peekTokenIs(TokenType.ASSIGN)){
+                        BoolStatement is = new BoolStatement();
+                        is.setName(new Identifier(curToken, curToken.getLiteral()));
+                        is.setToken(curToken);
+                        temp.add(is);
+                        nextToken();
+                        nextToken();
+                    }
+                    try{
+
+                        Expression value = parseExpression(OperatorType.LOWEST.getPrecedence());
+                        for(BoolStatement x: temp){
+                            x.setValue(value);
+                            tempStatementList.add(x);
+                        }
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+
+                try {
+                    newStmt.setValue(parseExpression(OperatorType.LOWEST.getPrecedence()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+                tempStatementList.add(newStmt);
+
+
+
+            }else if(statementsList.get(ident) instanceof CharStatement){
+                List<CharStatement> temp = new ArrayList<>();
+                CharStatement newStmt = new CharStatement();
+                Token token = new Token(TokenType.CHAR, "CHAR");
+                newStmt.setToken(token);
+                newStmt.setName(new Identifier(token, ident));
+                nextToken();
+                nextToken();
+
+                if(peekTokenIs(TokenType.ASSIGN)){
+                    temp.add(newStmt);
+                    while(peekTokenIs(TokenType.ASSIGN)){
+                        CharStatement is = new CharStatement();
+                        is.setName(new Identifier(curToken, curToken.getLiteral()));
+                        is.setToken(curToken);
+                        temp.add(is);
+                        nextToken();
+                        nextToken();
+                    }
+                    try{
+
+                        Expression value = parseExpression(OperatorType.LOWEST.getPrecedence());
+                        for(CharStatement x: temp){
+                            x.setValue(value);
+                            tempStatementList.add(x);
+                        }
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+
+                try {
+                    newStmt.setValue(parseExpression(OperatorType.LOWEST.getPrecedence()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+                tempStatementList.add(newStmt);
+
             }
         }
+    }
 
     private WhileExpression parseWhileExpression(){
         executableStarted = true;
         whileStarted = true;
-        
+
         WhileExpression exp = new WhileExpression();
         exp.setToken(curToken);
 
@@ -534,7 +549,7 @@ public class Parser {
         if(!expectPeek(TokenType.START)){
             return null;
         }
-       
+
         nextToken();
         if(!curTokenIs(TokenType.WHILE)){
             errors.add("Invalid WHILE");
@@ -551,112 +566,135 @@ public class Parser {
         return exp;
     }
 
-  
-        
-    private IfExpression parseIfExpression(){
+
+
+    private IfExpression parseIfExpression() {
         executableStarted = true;
         ifStarted = true;
-        
         IfExpression exp = new IfExpression();
-        exp.setToken(curToken);
-
-
-        if(!expectPeek(TokenType.LPARA)){
+        exp.setToken(curToken); // KUNG
+        if (!expectPeek(TokenType.LPARA)) {
+//            errors.add("Expected ( after KUNG at line " + Lexer.getLine());
             return null;
         }
         nextToken();
         try {
             exp.setCondition(parseExpression(OperatorType.LOWEST.getPrecedence()));
         } catch (Exception e) {
+            errors.add("Error parsing condition at line " + Lexer.getLine());
             e.printStackTrace();
-        }
-
-        if(!expectPeek(TokenType.RPARA)){
             return null;
         }
-        statementsCount++;
-        if(!expectPeek(TokenType.START)){
+        if (!expectPeek(TokenType.RPARA)) {
+            errors.add("Expected ) after condition at line " + Lexer.getLine());
             return null;
         }
-       
-        nextToken();
-        if(!curTokenIs(TokenType.IF)){
-            errors.add("Invalid token : line " + Lexer.getLine());
+        if (!expectPeek(TokenType.PUNDOK)) {
+            errors.add("Expected PUNDOK after condition at line " + Lexer.getLine());
             return null;
         }
-        statementsCount++;
-
+        if (!expectPeek(TokenType.LBRACE)) {
+            errors.add("Expected { after PUNDOK at line " + Lexer.getLine());
+            return null;
+        }
         try {
-            exp.setConsequence(parseBlockStatement(curToken.getLiteral()));
-            
+            exp.setConsequence(parsePundokBlock());
         } catch (Exception e) {
-           e.printStackTrace();
+            errors.add("Error parsing PUNDOK block at line " + Lexer.getLine());
+            e.printStackTrace();
+            return null;
         }
-
-        if(peekTokenIs(TokenType.ELSE)){
-            nextToken();
-            statementsCount++;
-            while(peekTokenIs(TokenType.IF)){
-                nextToken();
-                if(!expectPeek(TokenType.LPARA)){
+        // Handle else if (KUNG DILI) and else (KUNG WALA)
+        while (peekTokenIs(TokenType.IF)) {
+            nextToken(); // Consume KUNG
+//            System.out.println("After KUNG: Current: " + curToken + ", Peek: " + peekToken);
+            if (peekTokenIs(TokenType.NOT)) { // KUNG DILI
+                nextToken(); // Consume DILI
+//                System.out.println("Found DILI: " + curToken);
+                if (!expectPeek(TokenType.LPARA)) {
+                    errors.add("Expected ( after KUNG DILI at line " + Lexer.getLine());
                     return null;
                 }
                 nextToken();
+                Expression elseIfCondition;
                 try {
-                    exp.addElseCondition(parseExpression(OperatorType.LOWEST.getPrecedence()));
-                    
+                    elseIfCondition = parseExpression(OperatorType.LOWEST.getPrecedence());
                 } catch (Exception e) {
+                    errors.add("Error parsing else-if condition at line " + Lexer.getLine());
                     e.printStackTrace();
-                }
-                if(!expectPeek(TokenType.RPARA)){
                     return null;
                 }
-                statementsCount++;
-                if(!expectPeek(TokenType.START)){
+                if (!expectPeek(TokenType.RPARA)) {
+                    errors.add("Expected ) after else-if condition at line " + Lexer.getLine());
                     return null;
                 }
-
-                nextToken();
-                if(!curTokenIs(TokenType.IF)){
-                    errors.add("Invalid token, line" + Lexer.getLine());
+                if (!expectPeek(TokenType.PUNDOK)) {
+                    errors.add("Expected PUNDOK after else-if condition at line " + Lexer.getLine());
                     return null;
                 }
-                statementsCount++;
+                if (!expectPeek(TokenType.LBRACE)) {
+                    errors.add("Expected { after PUNDOK at line " + Lexer.getLine());
+                    return null;
+                }
+                BlockStatement elseIfConsequence;
                 try {
-                    exp.addElseConsequene(parseBlockStatement(curToken.getLiteral()));
-                    statementsCount++;
-                    
+                    elseIfConsequence = parsePundokBlock();
                 } catch (Exception e) {
-                   e.printStackTrace();
+                    errors.add("Error parsing else-if PUNDOK block at line " + Lexer.getLine());
+                    e.printStackTrace();
+                    return null;
                 }
-                if(!peekTokenIs(TokenType.ELSE)){
-                    return exp;
+                exp.addElseCondition(elseIfCondition);
+                exp.addElseConsequence(elseIfConsequence);
+            } else if (peekToken.getLiteral().equals("WALA")) {
+                nextToken(); // Consume WALA
+//                System.out.println("Found WALA: " + curToken);
+                if (!expectPeek(TokenType.PUNDOK)) {
+                    errors.add("Expected PUNDOK after KUNG WALA at line " + Lexer.getLine());
+                    return null;
                 }
-                nextToken();
-
-            }
-
-            if(!expectPeek(TokenType.START)){
+                if (!expectPeek(TokenType.LBRACE)) {
+                    errors.add("Expected { after PUNDOK at line " + Lexer.getLine());
+                    return null;
+                }
+                BlockStatement alternative;
+                try {
+                    alternative = parsePundokBlock();
+                } catch (Exception e) {
+                    errors.add("Error parsing else PUNDOK block at line " + Lexer.getLine());
+                    e.printStackTrace();
+                    return null;
+                }
+                exp.setAlternative(alternative);
+                break; // else is the last
+            } else {
+                errors.add("Expected DILI or WALA after KUNG, got " + peekToken.getLiteral() + " at line " + Lexer.getLine());
                 return null;
-            }
-            nextToken();
-            if(!curTokenIs(TokenType.IF)){
-                errors.add("Invalid token : line " + Lexer.getLine());
-                return null;
-            }
-            statementsCount++;
-            
-            try {
-                exp.setAlternative(parseBlockStatement(curToken.getLiteral()));
-                statementsCount++;
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
-        executableStarted = true;
         ifStarted = false;
-       return exp;
+        return exp;
+    }
 
+    private BlockStatement parsePundokBlock() throws Exception {
+        BlockStatement bs = new BlockStatement();
+        bs.setToken(curToken); // Should be LPARA
+        nextToken();
+        while (!curTokenIs(TokenType.RBRACE)) {
+            if (curTokenIs(TokenType.EOF)) {
+                errors.add("Unclosed block");
+                return null;
+            }
+            List<Statement> stmt = parseStatement();
+            if (stmt != null) {
+                for (Statement statement : stmt) {
+                    bs.addStatement(statement);
+                }
+            }
+            nextToken();
+        }
+        // Consume RPARA
+        return bs;
     }
 
 
@@ -714,7 +752,7 @@ public class Parser {
         tempStatementList.add(stmt);
         return stmt;
     }
-    
+
 
     private DisplayExpression parseDisplayExpression(){
         if(Lexer.getLine() - 1 < statementsCount){
@@ -740,7 +778,7 @@ public class Parser {
             try {
                 all.add(parseExpression(OperatorType.LOWEST.getPrecedence()));
             } catch (Exception e) {
-                
+
             }
         }
         while(peekTokenIs(TokenType.CONCAT)){
@@ -761,58 +799,99 @@ public class Parser {
         exp.setBody(all);
         statementsCount++;
         return exp;
-        
+
     }
 
-    private ScanExpression parseScanExpression(){
-        if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+    private ScanExpression parseScanExpression() {
+        if (Lexer.getLine() - 1 < statementsCount) {
+            errors.add("More than one statement per line is not allowed at line " + Lexer.getLine());
             return null;
         }
-        if(!variableDeclarationStarted){
-            errors.add("Executable code before variable declaration is invalid : line " + Lexer.getLine());
+        if (!variableDeclarationStarted) {
+            errors.add("Executable code before variable declaration is invalid at line " + Lexer.getLine());
             return null;
         }
         executableStarted = true;
         ScanExpression exp = new ScanExpression();
         List<String> idents = new ArrayList<>();
         exp.setToken(curToken);
-        if(!expectPeek(TokenType.COLON)){
+
+        if (!expectPeek(TokenType.COLON)) {
+            errors.add("Expected ':' after DAWAT at line " + Lexer.getLine());
             return null;
         }
-        if(!expectPeek(TokenType.IDENT)){
+        if (!expectPeek(TokenType.IDENT)) {
+            errors.add("Expected identifier after DAWAT: at line " + Lexer.getLine());
             return null;
         }
 
-        if(statementsList.containsKey(curToken.getLiteral())){
+        if (statementsList.containsKey(curToken.getLiteral())) {
             idents.add(curToken.getLiteral());
-        }else {
-            errors.add(String.format("Identifier %s does not exist", curToken.getLiteral()));
+        } else {
+            errors.add(String.format("Identifier %s does not exist at line %d", curToken.getLiteral(), Lexer.getLine()));
             return null;
         }
 
-        while(peekTokenIs(TokenType.COMMA)){
+        while (peekTokenIs(TokenType.COMMA)) {
             nextToken();
-            if(!expectPeek(TokenType.IDENT)){
+            if (!expectPeek(TokenType.IDENT)) {
+                errors.add("Expected identifier after comma in DAWAT at line " + Lexer.getLine());
                 return null;
             }
-    
-            if(statementsList.containsKey(curToken.getLiteral())){
+            if (statementsList.containsKey(curToken.getLiteral())) {
                 idents.add(curToken.getLiteral());
-            }else {
-                errors.add(String.format("Identifier %s does not exist", curToken.getLiteral()));
+            } else {
+                errors.add(String.format("Identifier %s does not exist at line %d", curToken.getLiteral(), Lexer.getLine()));
                 return null;
             }
         }
-        List<Expression> expressions = startScanning();
-        if(idents.size() != expressions.size()){
-            errors.add("Not enough arguments for scan : line " + Lexer.getLine());
+
+        List<Expression> expressions = startScanning(idents.size());
+        if (idents.size() != expressions.size()) {
+            errors.add("Number of inputs does not match number of variables at line " + Lexer.getLine());
             return null;
         }
         assignScan(idents, expressions);
+        statementsCount++;
         return exp;
-
     }
+
+    private List<Expression> startScanning(int expectedCount) {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        List<Expression> expressions = new ArrayList<>();
+        System.out.println("Input: ");
+        System.out.print(" ");
+
+        try {
+            String line = bufferedReader.readLine();
+            String[] inputs = line.trim().split("\\s*,\\s*");
+            if (inputs.length != expectedCount) {
+                errors.add("Expected " + expectedCount + " inputs, got " + inputs.length);
+                return expressions;
+            }
+
+            for (String input : inputs) {
+                Lexer l = new Lexer(input.trim());
+                Parser p = new Parser(l);
+                try {
+                    Expression expr = p.parseExpression(OperatorType.LOWEST.getPrecedence());
+                    if (expr != null) {
+                        expressions.add(expr);
+                    } else {
+                        errors.add("Invalid input: " + input);
+                    }
+                } catch (Exception e) {
+                    errors.add("Error parsing input: " + input);
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            errors.add("Error reading input: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return expressions;
+    }
+
     private void assignScan(List<String> idents, List<Expression> expressions){
         for(int i = 0; i < idents.size(); i++){
             if(statementsList.containsKey(idents.get(i))){
@@ -837,18 +916,18 @@ public class Parser {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         List<Expression> expressions = new ArrayList<>();
         String line = "";
-        
+
         System.out.println("Input: ");
         System.out.print(" ");
         try {
             line = bufferedReader.readLine();
         } catch (IOException e) {
-            
+
             e.printStackTrace();
         }
-        
-        
-    
+
+
+
         Lexer l = new Lexer(line);
         Parser p = new Parser(l);
 
@@ -865,8 +944,8 @@ public class Parser {
         return expressions;
     }
 
-    
-    
+
+
 
 
     private BlockStatement parseBlockStatement(String type) throws Exception{
@@ -874,7 +953,7 @@ public class Parser {
         bs.setToken(curToken);
 
         nextToken();
-        
+
         while(!curTokenIs(TokenType.END)){
             if(curTokenIs(TokenType.EOF)){
                 endCodeError(TokenType.END);
@@ -886,10 +965,10 @@ public class Parser {
                     bs.addStatement(statement);
                 }
             }
-            
+
             nextToken();
         }
-        
+
         nextToken();
         if(type.equals("KATAPUSAN")){
 
@@ -900,6 +979,7 @@ public class Parser {
 
         return bs;
     }
+
 
     public Expression parseIntegerLiteral(){
 
@@ -918,12 +998,12 @@ public class Parser {
         }
 
         literal.setValue(value);
-        
+
         return literal;
 
     }
     public Expression parseFloatLiteral(){
-        
+
         FloatLiteral literal = new FloatLiteral();
         literal.setToken(curToken);
         float value;
@@ -937,7 +1017,7 @@ public class Parser {
         }
 
         literal.setValue(value);
-        
+
         return literal;
 
     }
@@ -951,7 +1031,7 @@ public class Parser {
             if(!expectPeek(TokenType.RPARA)){
                 return null;
             }
-    
+
             return exp;
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -959,7 +1039,7 @@ public class Parser {
         }
 
         return null;
-        
+
     }
 
 
@@ -972,15 +1052,15 @@ public class Parser {
         if(peekTokenIs(TokenType.EOL)){
             nextToken();
         }
-       
+
         return stmt;
     }
-   
+
     public Expression parseExpression(int precedence) throws Exception{
         PrefixParseFn prefix = prefixParseFns.get(curToken.getTokenType());
         if(prefix == null){
             noPrefixParseFNError(curToken.getTokenType());
-            
+
             return null;
         }
         Expression leftExp = prefix.apply();
@@ -988,7 +1068,7 @@ public class Parser {
         while(!peekTokenIs(TokenType.EOL) && precedence < peekPrecedence() && !peekTokenIs(TokenType.CONCAT) && !peekTokenIs(TokenType.ESCAPE) && !peekTokenIs((TokenType.COMMA))){
             InfixParseFn infix = infixParseFns.get(peekToken.getTokenType());
             if(infix == null){
-                
+
                 return leftExp;
             }
             nextToken();
@@ -996,7 +1076,7 @@ public class Parser {
         }
         return leftExp;
     }
-    
+
 
     public CharStatement parseCharStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
@@ -1175,12 +1255,12 @@ public class Parser {
         if (!expectPeek(TokenType.IDENT)){
             return null;
         }
-            
+
         if(isReservedWord(curToken.getLiteral())){
             reservedWordsError(curToken.getLiteral());
             return null;
         }
-        
+
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
             errors.add(String.format("Identifier %s is already in use", ident.getValue()));
@@ -1198,14 +1278,14 @@ public class Parser {
                 while(peekTokenIs(TokenType.ASSIGN)){
                     IntStatement is = new IntStatement();
                     is.setToken(curToken);
-                    
+
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
                         errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
                         return null;
                     }
                     is.setName(tempIdent);
-                    
+
                     temp.add(is);
                     nextToken();
                     nextToken();
@@ -1222,21 +1302,21 @@ public class Parser {
                 }
                 return null;
             }
-            
+
             try {
                 Expression result = parseExpression(OperatorType.LOWEST.getPrecedence());
-                
+
                 stmt.setValue(result);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-           
+
         }else if(peekTokenIs(TokenType.COMMA)){
             nextToken();
             statementsCount--;
             parseIntStatement();
         }
-        
+
 
         statementsList.put(ident.getValue(), stmt);
         statementsCount++;
@@ -1248,12 +1328,12 @@ public class Parser {
             parseIntStatement();
         }
         tempStatementList.add(stmt);
-        
 
-       return stmt;
+
+        return stmt;
     }
 
-   
+
     public FloatStatement parseFloatStatement(){
         if(Lexer.getLine() -1 < statementsCount){
             errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
@@ -1269,12 +1349,12 @@ public class Parser {
         if (!expectPeek(TokenType.IDENT)){
             return null;
         }
-            
+
         if(isReservedWord(curToken.getLiteral())){
             reservedWordsError(curToken.getLiteral());
             return null;
         }
-        
+
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
             errors.add(String.format("Identifier %s is already in use", ident.getValue()));
@@ -1312,11 +1392,11 @@ public class Parser {
                 }
                 return null;
             }
-            
+
             try {
                 Expression result = parseExpression(OperatorType.LOWEST.getPrecedence());
                 stmt.setValue(result);
-                
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1326,7 +1406,7 @@ public class Parser {
             parseFloatStatement();
 
         }
-        
+
         statementsList.put(ident.getValue(), stmt);
         statementsCount++;
         if(peekTokenIs(TokenType.COMMA)){
@@ -1339,7 +1419,7 @@ public class Parser {
         return stmt;
 
     }
-    
+
     public BoolStatement parseBoolStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
             errors.add("More than one statement per line is not allowed." + Lexer.getLine());
@@ -1397,20 +1477,20 @@ public class Parser {
                 }
                 return null;
             }
-        
+
             try {
                 Expression result = parseExpression(OperatorType.LOWEST.getPrecedence());
-                
+
                 stmt.setValue(result);
             } catch (Exception e) {
                 e.printStackTrace();
-                }
+            }
         }else if(peekTokenIs(TokenType.COMMA)){
             nextToken();
             statementsCount--;
             parseBoolStatement();
         }
-        
+
 
         statementsList.put(ident.getValue(), stmt);
         statementsCount++;
@@ -1430,19 +1510,19 @@ public class Parser {
 
 
     public Expression parsePrefixExpression(){
-       
+
         PrefixExpression expression = new PrefixExpression();
         expression.setToken(curToken);
         expression.setOperator(curToken.getLiteral());
 
         nextToken();
-        
+
         try {
             expression.setRight(parseExpression(OperatorType.PREFIX.getPrecedence()));
         } catch (Exception e) {
             e.printStackTrace();
         }
-       
+
 
         return expression;
     }
@@ -1452,28 +1532,28 @@ public class Parser {
         expression.setToken(curToken);
         expression.setOperator(curToken.getLiteral());
         expression.setLeft(left);
-        
+
         int precedence = curPrecedence();
         nextToken();
         try {
             expression.setRight(parseExpression(precedence));
         } catch (Exception e) {
-            
+
         }
         return expression;
     }
 
 
-    
-    
+
+
     private boolean curTokenIs(TokenType t){
         return curToken.getTokenType() == t;
     }
-    
+
     private boolean peekTokenIs(TokenType t){
         return peekToken.getTokenType() == t;
     }
-    
+
     private boolean expectPeek(TokenType t){
         if(peekTokenIs(t)){
             nextToken();
@@ -1501,7 +1581,7 @@ public class Parser {
         return OperatorType.LOWEST.getPrecedence();
 
     }
-    
+
     public List<String> getErrors(){
         return errors;
     }
@@ -1511,14 +1591,14 @@ public class Parser {
         if(errors.size() == 0){
             return;
         }
-        
+
         StringBuilder message = new StringBuilder(String.format("Parser has %d errors:\n", errors.size()));
         for(String msg : errors){
             message.append("parser error: ").append(msg).append("\n");
         }
 
         Assert.fail(message.toString());
-        
+
 
     }
 
@@ -1542,8 +1622,8 @@ public class Parser {
     private void identifierMismatchError(String expected, String got){
         String msg = String.format("Identifer mismatch: %s",expected);
         errors.add(msg);
-        
-    }   
+
+    }
 
     private void reservedWordsError(String ident){
         String msg = String.format("can't use reserved words as identifier, %s", ident);
@@ -1573,7 +1653,7 @@ public class Parser {
     public void registerInfix(TokenType tokenType, InfixParseFn fn){
         infixParseFns.put(tokenType, fn);
     }
-    
+
     public int getStatementsCount(){
         return statementsCount;
     }
