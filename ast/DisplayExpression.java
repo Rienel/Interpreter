@@ -5,7 +5,7 @@ import java.util.List;
 
 import token.Token;
 
-public class DisplayExpression implements Expression{
+public class DisplayExpression implements Expression, Statement {
     Token token;
     
     List<Object> body;
@@ -25,8 +25,13 @@ public class DisplayExpression implements Expression{
     public void setToken(Token token) {
         this.token = token;
     }
-    
-    
+
+
+    @Override
+    public void statementNode() {
+
+    }
+
     @Override
     public void expressionNode() {
         // TODO Auto-generated method stub

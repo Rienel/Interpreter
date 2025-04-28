@@ -4,11 +4,50 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61f566a9-531b-47a9-b658-5a89b9f7959b" name="Changes" comment="fix" />
+    <list default="true" id="61f566a9-531b-47a9-b658-5a89b9f7959b" name="Changes" comment="fix">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main.code" beforeDir="false" afterPath="$PROJECT_DIR$/Main.code" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ast/BlockStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/ast/BlockStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ast/DisplayExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/ast/DisplayExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ast/IntStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/ast/IntStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ast/Program.java" beforeDir="false" afterPath="$PROJECT_DIR$/ast/Program.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ast/Statement.java" beforeDir="false" afterPath="$PROJECT_DIR$/ast/Statement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ast/WhileExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/ast/WhileExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/evaluator/Evaluator.java" beforeDir="false" afterPath="$PROJECT_DIR$/evaluator/Evaluator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lexer/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/lexer/Lexer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/Main.code" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/Main.code" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/BlockStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/BlockStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/BoolStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/BoolStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/CharStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/CharStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/ExpressionStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/ExpressionStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/FloatStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/FloatStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/HashStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/HashStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/IntStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/IntStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/ReturnStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/ReturnStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/Statement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/ast/Statement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/evaluator/Evaluator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/evaluator/Evaluator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser$OperatorType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser$OperatorType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/token/Token.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/token/Token.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/token/TokenType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Bisaya++/token/TokenType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/parser/Parser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parser/PrefixParseFn.java" beforeDir="false" afterPath="$PROJECT_DIR$/parser/PrefixParseFn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/token/Token.java" beforeDir="false" afterPath="$PROJECT_DIR$/token/Token.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/token/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/token/TokenType.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -22,6 +61,7 @@
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="2uUWrSzDvXaVepP7du06Y1mXVNJ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -35,6 +75,7 @@
     "git-widget-placeholder": "LOOP",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Paulflores/Desktop/b++",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -63,14 +104,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

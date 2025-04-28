@@ -69,10 +69,38 @@ public class Lexer {
                 tok = newToken(TokenType.RPARA, ch);
                 break;
             case '+':
-                tok = newToken(TokenType.PLUS, ch);
+                if(peekChar() == '='){
+                    char tempCh = ch;
+                    readChar();
+                    String finalLiteral = Character.toString(tempCh) + Character.toString(ch);
+                    tok.setLiteral(finalLiteral);
+                    tok.setTokenType(TokenType.PLUSEQUAL);
+                }else if(peekChar() == '+'){
+                    char tempCh = ch;
+                    readChar();
+                    String finalLiteral = Character.toString(tempCh) + Character.toString(ch);
+                    tok.setLiteral(finalLiteral);
+                    tok.setTokenType(TokenType.PLUSPLUS);
+                }else {
+                    tok = newToken(TokenType.PLUS, ch);
+                }
                 break;
             case '-':
-                tok = newToken(TokenType.SUBTRACT, ch);
+                if(peekChar() == '='){
+                    char tempCh = ch;
+                    readChar();
+                    String finalLiteral = Character.toString(tempCh) + Character.toString(ch);
+                    tok.setLiteral(finalLiteral);
+                    tok.setTokenType(TokenType.MINUSEQUAL);
+                }else if(peekChar() == '-'){
+                    char tempCh = ch;
+                    readChar();
+                    String finalLiteral = Character.toString(tempCh) + Character.toString(ch);
+                    tok.setLiteral(finalLiteral);
+                    tok.setTokenType(TokenType.MINUSMINUS);
+                }else {
+                    tok = newToken(TokenType.SUBTRACT, ch);
+                }
                 break;
             case '*':
                 tok = newToken(TokenType.MULTIPLY, ch);
@@ -171,7 +199,7 @@ public class Lexer {
             case '\\':
                 tok.setLiteral("\\");
                 tok.setTokenType(TokenType.INDEXCLOSE);
-                break;                           
+                break;
             case 0:
                 tok.setLiteral("");
                 tok.setTokenType(TokenType.EOF);
@@ -199,7 +227,7 @@ public class Lexer {
                 }
         }
         readChar();
-        // System.out.println(tok);
+//        System.out.println(tok);
         return tok;
     }
 
@@ -314,4 +342,6 @@ public class Lexer {
     public static int getLine(){
         return line;
     }
+
+
 }

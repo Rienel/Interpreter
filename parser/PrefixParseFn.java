@@ -3,6 +3,6 @@ package parser;
 import ast.Expression;
 
 public interface PrefixParseFn {
-    Expression apply();
+    Expression apply() throws Exception;
     
 } 

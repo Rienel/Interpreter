@@ -5,32 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ast.BeginExpression;
-import ast.BlockStatement;
-import ast.BoolStatement;
-import ast.BooleanExpression;
-import ast.CharStatement;
-import ast.CharacterExpression;
-import ast.DisplayExpression;
-import ast.Expression;
-import ast.ExpressionStatement;
-import ast.FloatLiteral;
-import ast.FloatStatement;
-import ast.HashLiteral;
-import ast.HashStatement;
-import ast.Identifier;
-import ast.IfExpression;
-import ast.IndexExpression;
-import ast.InfixExpression;
-import ast.IntStatement;
-import ast.IntegerLiteral;
-import ast.Node;
-import ast.PrefixExpression;
-import ast.Program;
-import ast.ReturnStatement;
-import ast.Statement;
-import ast.StringValue;
-import ast.WhileExpression;
+import ast.*;
 import object.BooleanObject;
 import object.CharacterObject;
 import object.Environment;
@@ -109,6 +84,10 @@ public class Evaluator {
         }else if(node instanceof WhileExpression){
             WhileExpression exp = (WhileExpression)node;
             return evalWhileExpression(exp,env);
+        }else if(node instanceof AlangSaExpression){
+            System.out.println("eval 88");
+            AlangSaExpression exp = (AlangSaExpression) node;
+            return evalAlangSaExpression(exp,env);
         }else if(node instanceof InfixExpression){
             InfixExpression ie = (InfixExpression)node;
             Object left = eval(ie.getLeft(), env);
@@ -397,6 +376,25 @@ public class Evaluator {
         return content;
     }
 
+    private static Object evalAlangSaExpression(AlangSaExpression expression, Environment env){
+        Object content = null;
+
+        // Evaluate initialization once before the loop starts
+        eval(expression.getInitialization(), env);
+
+        // Check condition before entering the loop
+        while (isTruthy(eval(expression.getCondition(), env))) {
+            // Evaluate the loop content/body
+            content = eval(expression.getContent(), env);
+
+            // Evaluate update at the end of each iteration
+            eval(expression.getUpdate(), env);
+        }
+
+        return content;
+    }
+
+
     private static boolean isTruthy(Object obj){
         if(obj.equals(NULL)){
             return false;
@@ -579,6 +577,18 @@ public class Evaluator {
                 return newError("unknown operator: %s%s", operator, right.type());
         }
     }
+    private static Object evalPostfixExpression(String operator, Object left){
+        switch (operator){
+            case "+":
+
+                return evalPlusPostfixOperatorExpression(left);
+
+            case "DILI":
+                return evalNotPostfixOperatorExpression(left);
+            default:
+                return newError("unknown operator: %s%s", operator, left.type());
+        }
+    }
 
     private static Object evalMinusPrefixOperatorExpression(Object right){
         if(!(right.type().equals(ObjectType.INTEGER_OBJ)) && !(right.type().equals(ObjectType.FLOAT_OBJ))){
@@ -596,6 +606,22 @@ public class Evaluator {
         }
     }
 
+    private static Object evalPlusPostfixOperatorExpression(Object left){
+        if(!(left.type().equals(ObjectType.INTEGER_OBJ)) && !(left.type().equals(ObjectType.FLOAT_OBJ))){
+            return NULL;
+        }
+        if(left.type().equals(ObjectType.INTEGER_OBJ)){
+
+            IntegerObject obj = (IntegerObject)left;
+            int value = obj.getValue();
+            return new IntegerObject(value * -1);
+        }else{
+            FloatObject obj = (FloatObject)left;
+            float value = obj.getValue();
+            return new FloatObject(value * -1);
+        }
+    }
+
     private static Object evalNotPrefixOperatorExpression(Object right){
         if(!(right.type().equals(ObjectType.BOOLEAN_OBJ))){
             newError("Error: Expected %s, got %s instead", ObjectType.BOOLEAN_OBJ, right.type());
@@ -606,6 +632,18 @@ public class Evaluator {
             boolean value = obj.getValue();
             return new BooleanObject(!value);
         
+    }
+
+    private static Object evalNotPostfixOperatorExpression(Object left){
+        if(!(left.type().equals(ObjectType.BOOLEAN_OBJ))){
+            newError("Error: Expected %s, got %s instead", ObjectType.BOOLEAN_OBJ, left.type());
+            return NULL;
+        }
+
+        BooleanObject obj = (BooleanObject)left;
+        boolean value = obj.getValue();
+        return new BooleanObject(!value);
+
     }
 
     private static Error newError(String format, java.lang.Object... a){

@@ -21,7 +21,6 @@ public class WhileExpression implements Expression {
         this.token = token;
         this.condition = condition;
         this.content = content;
-        
     }
 
     

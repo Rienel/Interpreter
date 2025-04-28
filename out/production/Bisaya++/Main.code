@@ -1,6 +1,7 @@
 SUGOD
-    NUMERO a = 3, b = 4, c, d
-	DAWAT: c
-	d = (3 + 4) * c
-	IPAKITA: d
+    MUGNA NUMERO ctr
+    ALANG SA (ctr = 1, ctr <= 3, ctr++)
+    PUNDOK {
+    IPAKITA: 1
+    }
 KATAPUSAN

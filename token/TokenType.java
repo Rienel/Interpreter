@@ -28,6 +28,10 @@ public enum TokenType {
     EQUAL("=="),
     NOTEQUAL("<>"),
     ESCAPE("["),
+    PLUSPLUS("++"),
+    PLUSEQUAL("+="),
+    MINUSEQUAL("-="),
+    MINUSMINUS("--"),
 
 
 
@@ -51,6 +55,10 @@ public enum TokenType {
     WHILE("WHILE"),
     RETURN("RETURN"),
     HASH("HASH"),
+
+    ALANG("ALANG"),
+    SA("SA"),
+    PUNDOK("PUNDOK"),
 
 
     //SPECIAL

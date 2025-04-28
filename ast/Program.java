@@ -30,19 +30,19 @@ public class Program implements Node{
     }
 
     public void addStatement(Statement statement){
+        System.out.println(statement.getTokenLiteral());
         this.statements.add(statement);
     }
    
 
     @Override
     public String string() {
-        StringBuilder out = new StringBuilder();
-        for(Statement s: statements){
-            out.append(s.string());
+        StringBuilder sb = new StringBuilder();
+        // Iterate through each statement and append its string representation
+        for (Statement stmt : statements) {
+            sb.append(stmt.toString()).append("\n");
         }
-        
-
-        return out.toString();
+        return sb.toString();
         
     }
 

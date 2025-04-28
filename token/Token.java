@@ -36,7 +36,11 @@ public class Token {
         keywords.put("DILI", TokenType.NOT);
         keywords.put("WHILE", TokenType.WHILE);
         keywords.put("RETURN", TokenType.RETURN);
-        keywords.put("HASH", tokenType.HASH);
+        keywords.put("HASH", TokenType.HASH);
+
+        keywords.put("ALANG", TokenType.ALANG);
+        keywords.put("SA", TokenType.SA);
+        keywords.put("PUNDOK", TokenType.PUNDOK);
     }
 
     public TokenType lookupIdent(String ident){

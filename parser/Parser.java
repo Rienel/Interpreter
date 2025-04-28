@@ -5,40 +5,38 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLOutput;
+import java.util.*;
 
 
 import ast.*;
 import lexer.Lexer;
+import org.junit.runners.model.TestTimedOutException;
 import token.Token;
 import token.TokenType;
 
-import org.junit.Assert;;
+import org.junit.Assert;
 
 
 public class Parser {
-    private Lexer lexer;
+    private final Lexer lexer;
     private Token curToken;
     private Token peekToken;
     private List<String> errors;
-    private Map<TokenType, PrefixParseFn> prefixParseFns;
-    private Map<TokenType, InfixParseFn> infixParseFns;
-    private Map<TokenType, Integer> infixPrecedences; 
+    private final Map<TokenType, PrefixParseFn> prefixParseFns;
+    private final Map<TokenType, InfixParseFn> infixParseFns;
+    private final Map<TokenType, Integer> infixPrecedences;
+    private final Map<TokenType, PrefixParseFn> postfixParseFns;
     private Map<String, Statement> statementsList; 
     private Boolean hasStarted;
     private Boolean variableDeclarationStarted;
     private Boolean executableStarted;
     private int statementsCount;
     private boolean ifStarted;
-    private Program program;
+    private final Program program;
     private List<Statement> tempStatementList;
     private boolean hasEnded;
-    private boolean whileStarted;
-
-
+    private boolean forLoopStarted;
 
     public enum OperatorType{
         
@@ -60,22 +58,21 @@ public class Parser {
             return precedence;
         }
     }
-    private List<String> reservedWords;
-    
-   
+    private final List<String> reservedWords;
 
     public Parser(Lexer lexer){
         tempStatementList = new ArrayList<>();
         program = new Program(new ArrayList<>());
         this.lexer = lexer;
         prefixParseFns = new HashMap<>();
+        postfixParseFns = new HashMap<>();
         infixParseFns = new HashMap<>();
         infixPrecedences = new HashMap<>();
         reservedWords = new ArrayList<>();
         statementsList = new HashMap<>();
         hasStarted = false;
         ifStarted = false;
-        whileStarted = false;
+        forLoopStarted = false;
         executableStarted = false;
         variableDeclarationStarted =false;
         hasEnded = false;
@@ -122,6 +119,9 @@ public class Parser {
         reservedWords.add("KATAPUSAN");
         reservedWords.add("FUNC");
         reservedWords.add("HASH");
+        reservedWords.add("ALANG");
+        reservedWords.add("SA");
+        reservedWords.add("PUNDOK");
     }
 
     private void registerExpressions(){
@@ -157,16 +157,16 @@ public class Parser {
         registerPrefix(TokenType.STRING, this::parseString);
         registerPrefix(TokenType.LBRACE, this::parseHashLiteral);
         registerInfix(TokenType.INDEXOPEN, this::parseIndexExpression);
-    }
 
+        registerPostfix(TokenType.PLUSPLUS, this::parsePostfixExpression);
+        registerPostfix(TokenType.MINUSMINUS, this::parsePostfixExpression);
+        registerPrefix(TokenType.ALANG, this::parseAlangSaExpression);
+    }
 
     public void nextToken(){
         curToken = peekToken;
         peekToken = lexer.nextToken();
     }
-
-    
-
 
     public Program ParseProgram() throws Exception{
         
@@ -180,12 +180,12 @@ public class Parser {
             }
             nextToken();
         }
-        
 
         return program;
         
 
     }
+
     public Expression parseString(){
         String str = curToken.getLiteral();
         return new StringValue(curToken, str);
@@ -240,9 +240,6 @@ public class Parser {
 
     }
 
-
-
-
     public Expression parseIndexExpression(Expression left){
         IndexExpression indexExpression = new IndexExpression();
         indexExpression.setToken(curToken);
@@ -261,45 +258,47 @@ public class Parser {
         return indexExpression;
     }
 
-
     public List<Statement> parseStatement() throws Exception {
         if(hasEnded){
-            errors.add(String.format("Error: token %s found after END CODE : line %d", curToken.getLiteral(), Lexer.getLine()));
+            errors.add(String.format("Error: token %s nakit-an human sa END CODE : linya %d", curToken.getLiteral(), Lexer.getLine()));
             return null;
         }
-           tempStatementList = new ArrayList<>();
 
+        tempStatementList = new ArrayList<>();
 
-            switch (curToken.getTokenType()){
-                case RETURN:
-                    parseReturnStatement();
-                    return tempStatementList;
-                case CHAR:
-                    if(executableStarted){
-                        errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
-                        return null;
-                    }
-                    variableDeclarationStarted = true;
-                    parseCharStatement();
-                    return tempStatementList;
-                case INT:
+        switch (curToken.getTokenType()){
+            case RETURN:
+                parseReturnStatement();
+                return tempStatementList;
+
+            case CHAR:
                 if(executableStarted){
-                    errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
+                    errors.add("ERROR: Dili pwede ang Variable human sa  Executable code : linya " + Lexer.getLine());
+                    return null;
+                }
+                variableDeclarationStarted = true;
+                parseCharStatement();
+                return tempStatementList;
+
+            case INT:
+                if(executableStarted){
+                    errors.add("ERROR: Dili pwede ang Variable human sa  Executable code : linya " + Lexer.getLine());
                     return null;
                 }
                 variableDeclarationStarted = true;
                 parseIntStatement();
-
                 return tempStatementList;
-                case BOOL:
+
+            case BOOL:
                 if(executableStarted){
-                    errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
+                    errors.add("ERROR: Dili pwede ang Variable human sa  Executable code : linya " + Lexer.getLine());
                     return null;
                 }
                 parseBoolStatement();
                 variableDeclarationStarted = true;
                 return tempStatementList;
-                case FLOAT:
+
+            case FLOAT:
                 if(executableStarted){
                     errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
                     return null;
@@ -307,34 +306,40 @@ public class Parser {
                 variableDeclarationStarted = true;
                 parseFloatStatement();
                 return tempStatementList;
-                case HASH:
+            case HASH:
                 if(executableStarted){
-                    errors.add("ERROR: Cannot Declare Variable after Executable code : line " + Lexer.getLine());
+                    errors.add("ERROR: Dili pwede ang Variable human sa  Executable code : linya " + Lexer.getLine());
                     return null;
                 }
                 variableDeclarationStarted = true;
                 parseHashStatement();
                 return tempStatementList;
-//                case IF:
-////                tempStatementList.add(parseKungStatement());
-//                return tempStatementList;
-//                case FOR:
-//                tempStatementList.add(parseAlangSaStatement());
-//                return tempStatementList;
-                case ILLEGAL:
-                    errors.add(String.format("Illegal token %s : line %d", curToken.getLiteral(), Lexer.getLine()));
-                    return null;
-                default:
-                    if(curTokenIs(TokenType.IDENT) && peekTokenIs(TokenType.ASSIGN)){
-                        parseReassignment();
-                        return tempStatementList;
-                    }
-                    List<Statement> tempExp = new ArrayList<>();
-                    tempExp.add(parseExpressionStatement());
-                    return tempExp;
-                
-            }
-        
+
+
+            case ILLEGAL:
+                errors.add(String.format("Illegal na token %s : linya %d", curToken.getLiteral(), Lexer.getLine()));
+                return null;
+
+            case ALANG:
+                // Handle the "ALANG" keyword (For loop initialization)
+                if (peekTokenIs(TokenType.SA)) {
+                    tempStatementList.add(parseAlangSaExpression()); // Call the parseForExpression method
+                    return tempStatementList;
+                }
+            case PUNDOK:
+                if (peekTokenIs(TokenType.LBRACE)) {
+                    tempStatementList.add(parsePundokExpression());
+                    return tempStatementList;
+                }
+            default:
+                if(curTokenIs(TokenType.IDENT) && peekTokenIs(TokenType.ASSIGN)){
+                    parseReassignment();
+                    return tempStatementList;
+                }
+                List<Statement> tempExp = new ArrayList<>();
+                tempExp.add(parseExpressionStatement());
+                return tempExp;
+        }
     }
 
     private void parseReassignment(){
@@ -511,7 +516,7 @@ public class Parser {
 
     private WhileExpression parseWhileExpression(){
         executableStarted = true;
-        whileStarted = true;
+        forLoopStarted = true;
         
         WhileExpression exp = new WhileExpression();
         exp.setToken(curToken);
@@ -537,7 +542,7 @@ public class Parser {
        
         nextToken();
         if(!curTokenIs(TokenType.WHILE)){
-            errors.add("Invalid WHILE");
+            errors.add("Sayup imong LOOP Mam/Ser");
             return null;
         }
         statementsCount++;
@@ -547,12 +552,10 @@ public class Parser {
         } catch(Exception e){
             e.printStackTrace();
         }
-        whileStarted = false;
+        forLoopStarted = false;
         return exp;
     }
 
-  
-        
     private IfExpression parseIfExpression(){
         executableStarted = true;
         ifStarted = true;
@@ -581,7 +584,7 @@ public class Parser {
        
         nextToken();
         if(!curTokenIs(TokenType.IF)){
-            errors.add("Invalid token : line " + Lexer.getLine());
+            errors.add("Invalid na token : linya " + Lexer.getLine());
             return null;
         }
         statementsCount++;
@@ -618,7 +621,7 @@ public class Parser {
 
                 nextToken();
                 if(!curTokenIs(TokenType.IF)){
-                    errors.add("Invalid token, line" + Lexer.getLine());
+                    errors.add("Invalid na token, linya " + Lexer.getLine());
                     return null;
                 }
                 statementsCount++;
@@ -641,7 +644,7 @@ public class Parser {
             }
             nextToken();
             if(!curTokenIs(TokenType.IF)){
-                errors.add("Invalid token : line " + Lexer.getLine());
+                errors.add("Invalid na token : linya " + Lexer.getLine());
                 return null;
             }
             statementsCount++;
@@ -659,10 +662,9 @@ public class Parser {
 
     }
 
-
     private BeginExpression parseBeginExpression(){
-        if(ifStarted || whileStarted){
-            errors.add("Invalid begin");
+        if(ifStarted || forLoopStarted){
+            errors.add("Dili pwede imo sugod");
             return null;
         }
         executableStarted = false;
@@ -675,7 +677,7 @@ public class Parser {
             return null;
         }
         if(hasStarted){
-            errors.add("ERROR: Code detected after END CODE");
+            errors.add("ERROR: Naay code human sa END CODE");
             return null;
         }
         hasStarted = true;
@@ -695,11 +697,11 @@ public class Parser {
 
     private ReturnStatement parseReturnStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+            errors.add("Sobra sa usa nga statement per line kay dili pwede : linya " + Lexer.getLine());
             return null;
         }
         if(!hasStarted){
-            errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
+            errors.add(String.format("Magsugod dapat ug %s, pero = %s : linya %d", curToken.getLiteral(), Lexer.getLine()));
             return null;
         }
         ReturnStatement stmt = new ReturnStatement();
@@ -714,16 +716,15 @@ public class Parser {
         tempStatementList.add(stmt);
         return stmt;
     }
-    
 
     private DisplayExpression parseDisplayExpression(){
         if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+            errors.add("Sobra sa usa nga statement per line kay dili pwede : linya " + Lexer.getLine());
             return null;
         }
         DisplayExpression exp = new DisplayExpression();
         if(!variableDeclarationStarted){
-            errors.add("Executable code before variable declaration is invalid : line " + Lexer.getLine());
+            errors.add("Executable code before variable declaration kay dili pwede : linya " + Lexer.getLine());
             return null;
         }
         executableStarted = true;
@@ -736,11 +737,10 @@ public class Parser {
         if(curTokenIs(TokenType.ESCAPE) || curTokenIs(TokenType.EOL)){
             all.add(curToken);
         }else{
-
             try {
                 all.add(parseExpression(OperatorType.LOWEST.getPrecedence()));
-            } catch (Exception e) {
-                
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
             }
         }
         while(peekTokenIs(TokenType.CONCAT)){
@@ -759,6 +759,12 @@ public class Parser {
             }
         }
         exp.setBody(all);
+
+        if(exp.getBody().isEmpty()){
+            System.out.println("Walay sulod");
+        }else {
+            System.out.println(exp.getTokenLiteral());
+        }
         statementsCount++;
         return exp;
         
@@ -766,11 +772,11 @@ public class Parser {
 
     private ScanExpression parseScanExpression(){
         if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+            errors.add("Sobra sa usa nga statement per line kay dili pwede : linya  " + Lexer.getLine());
             return null;
         }
         if(!variableDeclarationStarted){
-            errors.add("Executable code before variable declaration is invalid : line " + Lexer.getLine());
+            errors.add("Executable code before variable declaration kay dili pwede : linya" + Lexer.getLine());
             return null;
         }
         executableStarted = true;
@@ -787,7 +793,7 @@ public class Parser {
         if(statementsList.containsKey(curToken.getLiteral())){
             idents.add(curToken.getLiteral());
         }else {
-            errors.add(String.format("Identifier %s does not exist", curToken.getLiteral()));
+            errors.add(String.format("Identifier %s wala nabuhi", curToken.getLiteral()));
             return null;
         }
 
@@ -800,33 +806,30 @@ public class Parser {
             if(statementsList.containsKey(curToken.getLiteral())){
                 idents.add(curToken.getLiteral());
             }else {
-                errors.add(String.format("Identifier %s does not exist", curToken.getLiteral()));
+                errors.add(String.format("Identifier %s wala nabuhi", curToken.getLiteral()));
                 return null;
             }
         }
         List<Expression> expressions = startScanning();
         if(idents.size() != expressions.size()){
-            errors.add("Not enough arguments for scan : line " + Lexer.getLine());
+            errors.add("Kuwang imo ge butang para sa scan : linya " + Lexer.getLine());
             return null;
         }
         assignScan(idents, expressions);
         return exp;
 
     }
+
     private void assignScan(List<String> idents, List<Expression> expressions){
         for(int i = 0; i < idents.size(); i++){
             if(statementsList.containsKey(idents.get(i))){
-                if(statementsList.get(idents.get(i)) instanceof IntStatement){
-                    IntStatement is = (IntStatement) statementsList.get(idents.get(i));
+                if(statementsList.get(idents.get(i)) instanceof IntStatement is){
                     is.setValue(expressions.get(i));
-                }else if(statementsList.get(idents.get(i)) instanceof CharStatement){
-                    CharStatement is = (CharStatement) statementsList.get(idents.get(i));
+                }else if(statementsList.get(idents.get(i)) instanceof CharStatement is){
                     is.setValue(expressions.get(i));
-                }else if(statementsList.get(idents.get(i)) instanceof BoolStatement){
-                    BoolStatement is = (BoolStatement) statementsList.get(idents.get(i));
+                }else if(statementsList.get(idents.get(i)) instanceof BoolStatement is){
                     is.setValue(expressions.get(i));
-                }else if(statementsList.get(idents.get(i)) instanceof FloatStatement){
-                    FloatStatement is = (FloatStatement) statementsList.get(idents.get(i));
+                }else if(statementsList.get(idents.get(i)) instanceof FloatStatement is){
                     is.setValue(expressions.get(i));
                 }
             }
@@ -865,10 +868,6 @@ public class Parser {
         return expressions;
     }
 
-    
-    
-
-
     private BlockStatement parseBlockStatement(String type) throws Exception{
         BlockStatement bs = new BlockStatement();
         bs.setToken(curToken);
@@ -877,8 +876,8 @@ public class Parser {
         
         while(!curTokenIs(TokenType.END)){
             if(curTokenIs(TokenType.EOF)){
-                endCodeError(TokenType.END);
-                return null;
+                endCodeError();
+                //return null;
             }
             List<Statement> stmt = parseStatement();
             if(stmt != null){
@@ -911,7 +910,7 @@ public class Parser {
         try{
             value = Integer.parseInt(curToken.getLiteral(), 10);
         }catch(NumberFormatException e){
-            String msg = String.format("Could not parse %s as integer", curToken.getLiteral());
+            String msg = String.format("Di pwede  e-parse %s nga integer", curToken.getLiteral());
             System.err.println(msg);
             errors.add(msg);
             return null;
@@ -922,6 +921,7 @@ public class Parser {
         return literal;
 
     }
+
     public Expression parseFloatLiteral(){
         
         FloatLiteral literal = new FloatLiteral();
@@ -930,7 +930,7 @@ public class Parser {
         try{
             value = Float.parseFloat(curToken.getLiteral());
         }catch(NumberFormatException e){
-            String msg = String.format("Could not parse %s as float : line %d", curToken.getLiteral(), Lexer.getLine());
+            String msg = String.format("Di pwede  e-parse %s nga float : line %d", curToken.getLiteral(), Lexer.getLine());
             System.err.println(msg);
             errors.add(msg);
             return null;
@@ -962,7 +962,6 @@ public class Parser {
         
     }
 
-
     public ExpressionStatement parseExpressionStatement() throws Exception{
         ExpressionStatement stmt = new ExpressionStatement();
         stmt.setToken(curToken);
@@ -980,7 +979,6 @@ public class Parser {
         PrefixParseFn prefix = prefixParseFns.get(curToken.getTokenType());
         if(prefix == null){
             noPrefixParseFNError(curToken.getTokenType());
-            
             return null;
         }
         Expression leftExp = prefix.apply();
@@ -988,7 +986,7 @@ public class Parser {
         while(!peekTokenIs(TokenType.EOL) && precedence < peekPrecedence() && !peekTokenIs(TokenType.CONCAT) && !peekTokenIs(TokenType.ESCAPE) && !peekTokenIs((TokenType.COMMA))){
             InfixParseFn infix = infixParseFns.get(peekToken.getTokenType());
             if(infix == null){
-                
+
                 return leftExp;
             }
             nextToken();
@@ -996,15 +994,44 @@ public class Parser {
         }
         return leftExp;
     }
-    
+
+//    public Expression parseExpression(int precedence) throws Exception {
+//        // Parse prefix expression
+//        PrefixParseFn prefix = prefixParseFns.get(curToken.getTokenType());
+//        if (prefix == null) {
+//            noPrefixParseFNError(curToken.getTokenType());
+//            return null;
+//        }
+//
+//        Expression leftExp = prefix.apply();
+//
+//        // Parse infix or postfix expressions based on precedence
+//        while (!peekTokenIs(TokenType.EOL)
+//                && precedence < peekPrecedence()
+//                && !peekTokenIs(TokenType.CONCAT)
+//                && !peekTokenIs(TokenType.ESCAPE)
+//                && !peekTokenIs(TokenType.COMMA)) {
+//
+//            InfixParseFn infix = infixParseFns.get(peekToken.getTokenType());
+//            if (infix == null) {
+//                return leftExp;
+//            }
+//
+//            nextToken();
+//            leftExp = infix.apply(leftExp);
+//        }
+//
+//        return leftExp;
+//    }
+
 
     public CharStatement parseCharStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+            errors.add("Dili pde daghan: linya " + Lexer.getLine());
             return null;
         }
         if(!hasStarted){
-            errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
+            errors.add(String.format("Magsugod dapat ug %s, nakuha = %s : linya %d", curToken.getLiteral(), Lexer.getLine()));
             return null;
         }
         CharStatement stmt = new CharStatement();
@@ -1020,7 +1047,7 @@ public class Parser {
         }
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
+            errors.add(String.format("Identifier %s kay gigamit na", ident.getValue()));
             return null;
         }
         stmt.setName(ident);
@@ -1036,7 +1063,7 @@ public class Parser {
                     is.setToken(curToken);
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
-                        errors.add(String.format("Identifier %s is already in use", ident.getValue()));
+                        errors.add(String.format("Identifier %s kay gigamit na", ident.getValue()));
                         return null;
                     }
                     is.setName(tempIdent);
@@ -1080,14 +1107,13 @@ public class Parser {
         return stmt;
     }
 
-
     private HashStatement parseHashStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+            errors.add("Dili pde daghan : Linya " + Lexer.getLine());
             return null;
         }
         if(!hasStarted){
-            errors.add(String.format("Program should start with %s, got = %s : line ", "SUGOD", curToken.getLiteral()));
+            errors.add(String.format("Mag sugod dapat ug %s, got = %s : Linya ", curToken.getLiteral()));
             return null;
         }
         HashStatement stmt = new HashStatement();
@@ -1104,7 +1130,7 @@ public class Parser {
 
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
+            errors.add(String.format("Identifier %s kay gigamit na", ident.getValue()));
             return null;
         }
 
@@ -1128,45 +1154,13 @@ public class Parser {
 
     }
 
-//    private Statement parseKungStatement() {
-//        consume(TokenType.IF);
-//        Expression condition = parseExpression();
-//        consume(TokenType.THEN);
-//        BlockStatement consequence = parseBlockStatement();
-//        BlockStatement alternative = null;
-//
-//        if (match(TokenType.ELSE)) {
-//            consume(TokenType.ELSE);
-//            alternative = parseBlockStatement();
-//        }
-//        return new IfStatement(condition, consequence, alternative);
-//    }
-
-//    private Statement parseAlangSaStatement() {
-//        consume(TokenType.FOR);
-//        Statement initializer = parseStatement();
-//        consume(TokenType.TO);
-//        Expression condition = parseExpression();
-//        consume(TokenType.DO);
-//        BlockStatement body = parseBlockStatement();
-//        return new ForStatement(initializer, condition, body);
-//    }
-//
-//    private void consume(TokenType type) {
-//        if (curToken.getType() == type) {
-//            nextToken();
-//        } else {
-//            throw new RuntimeException("Expected " + type + " but got " + curToken.getType());
-//        }
-//    }
-
     public IntStatement parseIntStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+            errors.add("DI pwede daghan : line " + Lexer.getLine());
             return null;
         }
         if(!hasStarted){
-            errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
+            errors.add(String.format("Magsugod dapat %s, got = %s : linya %d", curToken.getLiteral(), Lexer.getLine()));
             return null;
         }
         IntStatement stmt = new IntStatement();
@@ -1183,7 +1177,7 @@ public class Parser {
         
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
+            errors.add(String.format("Identifier %s kay gigamit na", ident.getValue()));
             return null;
         }
 
@@ -1201,7 +1195,7 @@ public class Parser {
                     
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
-                        errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
+                        errors.add(String.format("Identifier %s kay gigamit na", tempIdent.getValue()));
                         return null;
                     }
                     is.setName(tempIdent);
@@ -1253,14 +1247,13 @@ public class Parser {
        return stmt;
     }
 
-   
     public FloatStatement parseFloatStatement(){
         if(Lexer.getLine() -1 < statementsCount){
-            errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
+            errors.add("Di pwede daghan : line " + Lexer.getLine());
             return null;
         }
         if(!hasStarted){
-            errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
+            errors.add(String.format("Mag sugod dapat %s, got = %s : linya %d", curToken.getLiteral(), Lexer.getLine()));
             return null;
         }
         FloatStatement stmt = new FloatStatement();
@@ -1277,7 +1270,7 @@ public class Parser {
         
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
+            errors.add(String.format("Identifier %s kay gigamit na", ident.getValue()));
             return null;
         }
         stmt.setName(ident);
@@ -1293,7 +1286,7 @@ public class Parser {
                     is.setToken(curToken);
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
-                        errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
+                        errors.add(String.format("Identifier %s kay gigamit na", tempIdent.getValue()));
                         return null;
                     }
                     temp.add(is);
@@ -1342,11 +1335,11 @@ public class Parser {
     
     public BoolStatement parseBoolStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
-            errors.add("More than one statement per line is not allowed." + Lexer.getLine());
+            errors.add("Di pwede daghan. Linya: " + Lexer.getLine());
             return null;
         }
         if(!hasStarted){
-            errors.add(String.format("Program should start with %s", "SUGOD", curToken.getLiteral()));
+            errors.add(String.format("Magsugod dapat ug %s"));
             return null;
         }
         BoolStatement stmt = new BoolStatement();
@@ -1362,7 +1355,7 @@ public class Parser {
         }
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
-            errors.add(String.format("Identifier %s is already in use", ident.getValue()));
+            errors.add(String.format("Identifier %s kay gigamit na", ident.getValue()));
             return null;
         }
         stmt.setName(ident);
@@ -1378,7 +1371,7 @@ public class Parser {
                     is.setToken(curToken);
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
-                        errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
+                        errors.add(String.format("Identifier %s kay gigamit na", tempIdent.getValue()));
                         return null;
                     }
                     temp.add(is);
@@ -1425,10 +1418,6 @@ public class Parser {
         return stmt;
     }
 
-
-
-
-
     public Expression parsePrefixExpression(){
        
         PrefixExpression expression = new PrefixExpression();
@@ -1447,6 +1436,22 @@ public class Parser {
         return expression;
     }
 
+    public Expression parsePostfixExpression() throws Exception {
+        // Start by parsing the left operand (e.g., `ctr`)
+        Expression left = parseExpression(OperatorType.LOWEST.getPrecedence());
+
+        // Create the PostfixExpression object
+        PostfixExpression expression = new PostfixExpression();
+        expression.setToken(curToken);  // Set the current token (e.g., `++`)
+        expression.setLeft(left);  // Set the left operand (e.g., `ctr`)
+
+        // Move to the next token (to process any following operator)
+        nextToken();
+
+        // Return the PostfixExpression
+        return expression;
+    }
+
     public Expression parseInfixExpression(Expression left){
         InfixExpression expression = new InfixExpression();
         expression.setToken(curToken);
@@ -1457,15 +1462,132 @@ public class Parser {
         nextToken();
         try {
             expression.setRight(parseExpression(precedence));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             
         }
         return expression;
     }
 
+    private AlangSaExpression parseAlangSaExpression() throws Exception {
+        executableStarted = true;
+        forLoopStarted = true;
+        String str = "";
+        int start,end;
+        AlangSaExpression alangSaExpr = new AlangSaExpression();
+        alangSaExpr.setToken(curToken);
 
-    
-    
+        if (!expectPeek(TokenType.SA)) {
+            return null;
+        }
+
+        if (!expectPeek(TokenType.LPARA)) {
+            return null;
+        }
+        nextToken(); // Move inside the parentheses
+
+        // Parse initialization
+        List<Statement> initializationList = parseStatement();
+        if (initializationList != null && !initializationList.isEmpty()) {
+            alangSaExpr.setInitialization(initializationList.getFirst()); // fix here
+        }
+        //start
+        start = Integer.parseInt(curToken.getLiteral());
+        if (!expectPeek(TokenType.COMMA)) {
+            System.out.println(curToken.getLiteral());
+            return null;
+        }
+        nextToken(); // move to condition
+        if(peekTokenIs(TokenType.LESS)){
+            str = "<";
+        }
+        else if(peekTokenIs(TokenType.LESSEQ)){
+            str = "<=";
+        }
+        else if(peekTokenIs(TokenType.GREAT)){
+            str = ">";
+        }
+        else if(peekTokenIs(TokenType.GREATEQ)){
+            str = ">=";
+        }
+        else if(peekTokenIs(TokenType.EQUAL)){
+            str = "==";
+        }
+        else if(peekTokenIs(TokenType.NOTEQUAL)){
+            str = "<>";
+        }
+
+
+        Expression condition = parseExpression(0);
+        alangSaExpr.setCondition(condition);
+
+        System.out.println("->" + curToken.getLiteral());
+        end = Integer.parseInt(curToken.getLiteral());
+        if (!expectPeek(TokenType.COMMA)) {
+            return null;
+        }
+
+        nextToken(); // move to update
+        List<Statement> updateList = parseStatement();
+        System.out.println("->" + curToken.getLiteral());
+        if (updateList != null && !updateList.isEmpty()) {
+            alangSaExpr.setUpdate(updateList.getFirst()); // fix here
+            nextToken();
+        }
+        System.out.println("->" + curToken.getLiteral());
+
+        if (!expectPeek(TokenType.RPARA)) {
+            return null;
+        }
+
+        if (!expectPeek(TokenType.PUNDOK)) {
+            return null;
+        }
+
+        nextToken(); // Move into PUNDOK block
+        BlockStatement content = parsePundokExpression();
+        alangSaExpr.setContent(content);
+
+
+        return alangSaExpr;
+
+    }
+
+
+
+    private BlockStatement parsePundokExpression() {
+        BlockStatement block = new BlockStatement();
+        block.setToken(curToken); // '{' token
+
+        List<Statement> stmt = new ArrayList<>();
+        nextToken(); // move to the first token inside block
+
+        while (!curTokenIs(TokenType.RBRACE) && !curTokenIs(TokenType.END) && !curTokenIs(TokenType.EOF)) {
+            Statement statement = null;
+
+            // Parse Display (IPAKITA)
+            if (curTokenIs(TokenType.DISPLAY)) {
+                System.out.println(">>>>" + curToken);
+            }
+            else if (curTokenIs(TokenType.COLON)) {
+                System.out.println(">>>>" + curToken);
+            }
+            else if (curTokenIs(TokenType.IDENT)) {
+                System.out.println(">>>>" + curToken);
+            }
+            else if (curTokenIs(TokenType.INTEGER)) {
+                System.out.println(">>>>" + curToken);
+            }
+            else {
+                nextToken(); // Move to the next token
+                continue; // Skip the current token and move forward
+            }
+            nextToken(); // Move to the next token after processing the current one
+        }
+        block.setStatements(stmt); // Set the list of statements to the block
+        return block;
+    }
+
+
     private boolean curTokenIs(TokenType t){
         return curToken.getTokenType() == t;
     }
@@ -1473,7 +1595,7 @@ public class Parser {
     private boolean peekTokenIs(TokenType t){
         return peekToken.getTokenType() == t;
     }
-    
+
     private boolean expectPeek(TokenType t){
         if(peekTokenIs(t)){
             nextToken();
@@ -1487,7 +1609,7 @@ public class Parser {
     private int curPrecedence(){
         Integer p = infixPrecedences.get(curToken.getTokenType());
         if(p != null){
-            return p.intValue();
+            return p;
         }
 
         return OperatorType.LOWEST.getPrecedence();
@@ -1496,7 +1618,7 @@ public class Parser {
     private int peekPrecedence(){
         Integer p = infixPrecedences.get(peekToken.getTokenType());
         if(p != null){
-            return p.intValue();
+            return p;
         }
         return OperatorType.LOWEST.getPrecedence();
 
@@ -1508,11 +1630,11 @@ public class Parser {
 
     public void checkParserErrors(){
         errors = getErrors();
-        if(errors.size() == 0){
+        if(errors.isEmpty()){
             return;
         }
         
-        StringBuilder message = new StringBuilder(String.format("Parser has %d errors:\n", errors.size()));
+        StringBuilder message = new StringBuilder(String.format("Parser kay naay %d errors:\n", errors.size()));
         for(String msg : errors){
             message.append("parser error: ").append(msg).append("\n");
         }
@@ -1526,32 +1648,29 @@ public class Parser {
         return reservedWords.contains(ident);
     }
 
-    public void noPrefixParseFNError(TokenType t){
-
-        String msg = String.format("Invalid token at line %d", Lexer.getLine());
-
-
+    public void noPrefixParseFNError(TokenType ignoredT){
+        String msg = String.format("Dili pwede na  token  %s sa linya: %d noPrefixParseError", curToken.getLiteral(),Lexer.getLine());
         errors.add(msg);
     }
 
-    private void peekError(TokenType t){
-        String msg = String.format("%d: expected to be %s",Lexer.getLine(), peekToken.getTokenType());
+    private void peekError(TokenType ignoredT){
+        String msg = String.format("%d: nag expected sya nga %s peekError" + curToken,Lexer.getLine(), peekToken.getTokenType());
         errors.add(msg);
     }
 
-    private void identifierMismatchError(String expected, String got){
+    private void identifierMismatchError(String expected, String ignoredGot){
         String msg = String.format("Identifer mismatch: %s",expected);
         errors.add(msg);
         
     }   
 
     private void reservedWordsError(String ident){
-        String msg = String.format("can't use reserved words as identifier, %s", ident);
+        String msg = String.format("dili pwede kay identifier, %s reservedWordsError", ident);
         errors.add(msg);
     }
 
-    private void endCodeError(TokenType t){
-        String msg = String.format("expected token %s %s", t, curToken.getTokenType());
+    private void endCodeError(){
+        String msg = String.format("nag expected sya nga ug token %s %s endCodeError" +curToken, TokenType.END, curToken.getTokenType());
         errors.add(msg);
     }
 
@@ -1565,6 +1684,14 @@ public class Parser {
         errors.add(msg);
     }
 
+    public void noPostfixParseFNError(TokenType ignoredT){
+        String msg = String.format("Invalid token  %s at line %d noPostfixParseError", curToken.getLiteral(),Lexer.getLine());
+        errors.add(msg);
+    }
+
+    public void registerPostfix(TokenType tokenType, PrefixParseFn fn){
+        postfixParseFns.put(tokenType, fn);
+    }
 
     public void registerPrefix(TokenType tokenType, PrefixParseFn fn){
         prefixParseFns.put(tokenType, fn);

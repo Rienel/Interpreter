@@ -59,7 +59,7 @@ public class IntStatement implements Statement {
         if(value != null){
             out.append(value.string());
         }
-        out.append("$");
+        //out.append("$");
 
         return out.toString();
     }
