@@ -678,7 +678,7 @@ public class Parser {
 
     private BlockStatement parsePundokBlock() throws Exception {
         BlockStatement bs = new BlockStatement();
-        bs.setToken(curToken); // Should be LPARA
+        bs.setToken(curToken);
         nextToken();
         while (!curTokenIs(TokenType.RBRACE)) {
             if (curTokenIs(TokenType.EOF)) {
@@ -1208,40 +1208,7 @@ public class Parser {
         statementsCount++;
         return stmt;
 
-
     }
-
-//    private Statement parseKungStatement() {
-//        consume(TokenType.IF);
-//        Expression condition = parseExpression();
-//        consume(TokenType.THEN);
-//        BlockStatement consequence = parseBlockStatement();
-//        BlockStatement alternative = null;
-//
-//        if (match(TokenType.ELSE)) {
-//            consume(TokenType.ELSE);
-//            alternative = parseBlockStatement();
-//        }
-//        return new IfStatement(condition, consequence, alternative);
-//    }
-
-//    private Statement parseAlangSaStatement() {
-//        consume(TokenType.FOR);
-//        Statement initializer = parseStatement();
-//        consume(TokenType.TO);
-//        Expression condition = parseExpression();
-//        consume(TokenType.DO);
-//        BlockStatement body = parseBlockStatement();
-//        return new ForStatement(initializer, condition, body);
-//    }
-//
-//    private void consume(TokenType type) {
-//        if (curToken.getType() == type) {
-//            nextToken();
-//        } else {
-//            throw new RuntimeException("Expected " + type + " but got " + curToken.getType());
-//        }
-//    }
 
     public IntStatement parseIntStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
@@ -1589,22 +1556,6 @@ public class Parser {
         return errors;
     }
 
-    public void checkParserErrors(){
-        errors = getErrors();
-        if(errors.size() == 0){
-            return;
-        }
-
-        StringBuilder message = new StringBuilder(String.format("Parser has %d errors:\n", errors.size()));
-        for(String msg : errors){
-            message.append("parser error: ").append(msg).append("\n");
-        }
-
-        Assert.fail(message.toString());
-
-
-    }
-
     private boolean isReservedWord(String ident){
         return reservedWords.contains(ident);
     }
@@ -1622,29 +1573,8 @@ public class Parser {
         errors.add(msg);
     }
 
-    private void identifierMismatchError(String expected, String got){
-        String msg = String.format("Identifer mismatch: %s",expected);
-        errors.add(msg);
-
-    }
-
     private void reservedWordsError(String ident){
         String msg = String.format("can't use reserved words as identifier, %s", ident);
-        errors.add(msg);
-    }
-
-    private void endCodeError(TokenType t){
-        String msg = String.format("expected token %s %s", t, curToken.getTokenType());
-        errors.add(msg);
-    }
-
-    private void typeConversionError(TokenType t){
-        String msg = String.format("Type conversion error %s %s", t, curToken.getTokenType() );
-        errors.add(msg);
-    }
-
-    private void typeConversionError(String t){
-        String msg = String.format("Type conversion error %s %s", t, curToken.getTokenType() );
         errors.add(msg);
     }
 

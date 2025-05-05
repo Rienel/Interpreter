@@ -15,28 +15,15 @@ public class IfExpression implements Expression{
     BlockStatement alternative;
 
 
-
     public IfExpression() {
         elseConditions = new ArrayList<>();
         elseConsequences = new ArrayList<>();
     }
 
 
-    public IfExpression(Token token, Expression condition, BlockStatement consequence, BlockStatement alternative) {
-        this.token = token;
-        this.condition = condition;
-        this.consequence = consequence;
-        this.alternative = alternative;
-        elseConditions = new ArrayList<>();
-        elseConsequences = new ArrayList<>();
-    }
-
-
-
     @Override
     public void expressionNode() {
-        // TODO Auto-generated method stub
-
+        // placeholder
     }
 
     @Override
@@ -92,19 +79,13 @@ public class IfExpression implements Expression{
         this.alternative = alternative;
     }
 
-
     public List<Expression> getElseConditions() {
         return elseConditions;
     }
 
-
-    public void setElseConditions(List<Expression> elseConditions) {
-        this.elseConditions = elseConditions;
-    }
     public void addElseCondition(Expression bs){
         elseConditions.add(bs);
     }
-
 
     public List<BlockStatement> getElseConsequences() {
         return elseConsequences;
@@ -112,10 +93,4 @@ public class IfExpression implements Expression{
     public void addElseConsequence(BlockStatement bs){
         elseConsequences.add(bs);
     }
-
-
-    public void setElseConsequences(List<BlockStatement> elseConsequences) {
-        this.elseConsequences = elseConsequences;
-    }
-
 }

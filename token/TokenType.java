@@ -12,6 +12,8 @@ public enum TokenType {
     FALSE("DILI"),
     CHARACTER("CHARACTER"),
 
+
+
     //Operators
     ASSIGN("="),
     LPARA("("),
@@ -32,7 +34,6 @@ public enum TokenType {
 
 
     //KEYWORD
-
     START("SUGOD"),
     MUGNA("MUGNA"),
     END("KATAPUSAN"),
@@ -43,7 +44,6 @@ public enum TokenType {
     DISPLAY("IPAKITA"),
     SCAN("DAWAT"),
     IF("KUNG"),
-//    ELSE("WALA"),
     PUNDOK("PUNDOK"),
     AND("UG"),
     OR("O"),
@@ -54,8 +54,9 @@ public enum TokenType {
     HASH("HASH"),
 
 
+
     //SPECIAL
-//    COMMENT("#"),
+    //COMMENT("#"),
     COLON(":"),
     LBRACE("{"),
     RBRACE("}"),
@@ -64,7 +65,6 @@ public enum TokenType {
     INDEXOPEN("|"),
     INDEXCLOSE("\\"),
     CONCAT("&");
-
 
 
 
