@@ -16,7 +16,7 @@ import lexer.Lexer;
 import token.Token;
 import token.TokenType;
 
-import org.junit.Assert;;
+;
 
 
 public class Parser {
@@ -731,14 +731,14 @@ public class Parser {
         return exp;
     }
 
-    private ReturnStatement parseReturnStatement(){
+    private void parseReturnStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
             errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
-            return null;
+            return;
         }
         if(!hasStarted){
             errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
-            return null;
+            return;
         }
         ReturnStatement stmt = new ReturnStatement();
         stmt.setToken(curToken);
@@ -750,7 +750,6 @@ public class Parser {
             e.printStackTrace();
         }
         tempStatementList.add(stmt);
-        return stmt;
     }
 
 
@@ -777,7 +776,7 @@ public class Parser {
 
             try {
                 all.add(parseExpression(OperatorType.LOWEST.getPrecedence()));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }
@@ -1037,7 +1036,6 @@ public class Parser {
 
             return exp;
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -1081,30 +1079,30 @@ public class Parser {
     }
 
 
-    public CharStatement parseCharStatement(){
+    public void parseCharStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
             errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
-            return null;
+            return;
         }
         if(!hasStarted){
             errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
-            return null;
+            return;
         }
         CharStatement stmt = new CharStatement();
         stmt.setToken(curToken);
 
         if (!expectPeek(TokenType.IDENT)){
-            return null;
+            return;
         }
 
         if(isReservedWord(curToken.getLiteral())){
             reservedWordsError(curToken.getLiteral());
-            return null;
+            return;
         }
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
             errors.add(String.format("Identifier %s is already in use", ident.getValue()));
-            return null;
+            return;
         }
         stmt.setName(ident);
 
@@ -1120,7 +1118,7 @@ public class Parser {
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
                         errors.add(String.format("Identifier %s is already in use", ident.getValue()));
-                        return null;
+                        return;
                     }
                     is.setName(tempIdent);
                     temp.add(is);
@@ -1137,7 +1135,7 @@ public class Parser {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                return null;
+                return;
             }
             try {
                 Expression result = parseExpression(OperatorType.LOWEST.getPrecedence());
@@ -1160,35 +1158,34 @@ public class Parser {
             parseCharStatement();
         }
         tempStatementList.add(stmt);
-        return stmt;
     }
 
 
-    private HashStatement parseHashStatement(){
+    private void parseHashStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
             errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
-            return null;
+            return;
         }
         if(!hasStarted){
             errors.add(String.format("Program should start with %s, got = %s : line ", "SUGOD", curToken.getLiteral()));
-            return null;
+            return;
         }
         HashStatement stmt = new HashStatement();
         stmt.setToken(curToken);
 
         if(!expectPeek(TokenType.IDENT)){
-            return null;
+            return;
         }
 
         if(isReservedWord(curToken.getLiteral())){
             reservedWordsError(curToken.getLiteral());
-            return null;
+            return;
         }
 
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
             errors.add(String.format("Identifier %s is already in use", ident.getValue()));
-            return null;
+            return;
         }
 
         stmt.setIdent(ident);
@@ -1206,35 +1203,34 @@ public class Parser {
         tempStatementList.add(stmt);
         statementsList.put(ident.getValue(), stmt);
         statementsCount++;
-        return stmt;
 
     }
 
-    public IntStatement parseIntStatement(){
+    public void parseIntStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
             errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
-            return null;
+            return;
         }
         if(!hasStarted){
             errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
-            return null;
+            return;
         }
         IntStatement stmt = new IntStatement();
         stmt.setToken(curToken);
 
         if (!expectPeek(TokenType.IDENT)){
-            return null;
+            return;
         }
 
         if(isReservedWord(curToken.getLiteral())){
             reservedWordsError(curToken.getLiteral());
-            return null;
+            return;
         }
 
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
             errors.add(String.format("Identifier %s is already in use", ident.getValue()));
-            return null;
+            return;
         }
 
         stmt.setName(ident);
@@ -1252,7 +1248,7 @@ public class Parser {
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
                         errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
-                        return null;
+                        return;
                     }
                     is.setName(tempIdent);
 
@@ -1270,7 +1266,7 @@ public class Parser {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                return null;
+                return;
             }
 
             try {
@@ -1300,35 +1296,34 @@ public class Parser {
         tempStatementList.add(stmt);
 
 
-        return stmt;
     }
 
 
-    public FloatStatement parseFloatStatement(){
+    public void parseFloatStatement(){
         if(Lexer.getLine() -1 < statementsCount){
             errors.add("More than one statement per line is not allowed : line " + Lexer.getLine());
-            return null;
+            return;
         }
         if(!hasStarted){
             errors.add(String.format("Program should start with %s, got = %s : line %d", "SUGOD", curToken.getLiteral(), Lexer.getLine()));
-            return null;
+            return;
         }
         FloatStatement stmt = new FloatStatement();
         stmt.setToken(curToken);
 
         if (!expectPeek(TokenType.IDENT)){
-            return null;
+            return;
         }
 
         if(isReservedWord(curToken.getLiteral())){
             reservedWordsError(curToken.getLiteral());
-            return null;
+            return;
         }
 
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
             errors.add(String.format("Identifier %s is already in use", ident.getValue()));
-            return null;
+            return;
         }
         stmt.setName(ident);
 
@@ -1344,7 +1339,7 @@ public class Parser {
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
                         errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
-                        return null;
+                        return;
                     }
                     temp.add(is);
                     nextToken();
@@ -1360,7 +1355,7 @@ public class Parser {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                return null;
+                return;
             }
 
             try {
@@ -1386,34 +1381,32 @@ public class Parser {
         }
         tempStatementList.add(stmt);
 
-        return stmt;
-
     }
 
-    public BoolStatement parseBoolStatement(){
+    public void parseBoolStatement(){
         if(Lexer.getLine() - 1 < statementsCount){
             errors.add("More than one statement per line is not allowed." + Lexer.getLine());
-            return null;
+            return;
         }
         if(!hasStarted){
             errors.add(String.format("Program should start with %s", "SUGOD", curToken.getLiteral()));
-            return null;
+            return;
         }
         BoolStatement stmt = new BoolStatement();
         stmt.setToken(curToken);
 
         if (!expectPeek(TokenType.IDENT)){
-            return null;
+            return;
         }
 
         if(isReservedWord(curToken.getLiteral())){
             reservedWordsError(curToken.getLiteral());
-            return null;
+            return;
         }
         Identifier ident = new Identifier(curToken, curToken.getLiteral());
         if(statementsList.containsKey(ident.getValue())){
             errors.add(String.format("Identifier %s is already in use", ident.getValue()));
-            return null;
+            return;
         }
         stmt.setName(ident);
 
@@ -1429,7 +1422,7 @@ public class Parser {
                     Identifier tempIdent = new Identifier(curToken, curToken.getLiteral());
                     if(statementsList.containsKey(ident.getValue())){
                         errors.add(String.format("Identifier %s is already in use", tempIdent.getValue()));
-                        return null;
+                        return;
                     }
                     temp.add(is);
                     nextToken();
@@ -1445,7 +1438,7 @@ public class Parser {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                return null;
+                return;
             }
 
             try {
@@ -1472,7 +1465,6 @@ public class Parser {
         }
 
         tempStatementList.add(stmt);
-        return stmt;
     }
 
 
@@ -1537,7 +1529,7 @@ public class Parser {
     private int curPrecedence(){
         Integer p = infixPrecedences.get(curToken.getTokenType());
         if(p != null){
-            return p.intValue();
+            return p;
         }
 
         return OperatorType.LOWEST.getPrecedence();
@@ -1546,7 +1538,7 @@ public class Parser {
     private int peekPrecedence(){
         Integer p = infixPrecedences.get(peekToken.getTokenType());
         if(p != null){
-            return p.intValue();
+            return p;
         }
         return OperatorType.LOWEST.getPrecedence();
 

@@ -5,95 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61f566a9-531b-47a9-b658-5a89b9f7959b" name="Changes" comment="fix">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.code" beforeDir="false" afterPath="$PROJECT_DIR$/Main.code" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ast/AstTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ast/IfExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/ast/IfExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/evaluator/EvaluatorTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lexer/LexerTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/.idea/libraries/lib.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/.idea/material_theme_project_new.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/.vscode/launch.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/Bisaya++.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/Language Specification of Bisaya++.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/Main.code" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/AstTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/BeginExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/BlockStatement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/BoolStatement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/BooleanExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/CharStatement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/CharacterExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/DisplayExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/EndExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/Expression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/ExpressionStatement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/FloatLiteral.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/FloatStatement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/HashLiteral.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/HashStatement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/Identifier.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/IfExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/IndexExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/InfixExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/IntStatement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/IntegerLiteral.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/Node.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/PrefixExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/Program.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/ReturnStatement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/ScanExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/Statement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/StringValue.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/ast/WhileExpression.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/evaluator/Evaluator.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/evaluator/EvaluatorTest$IntegerTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/evaluator/EvaluatorTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/lexer/Lexer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/lexer/LexerTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/lib/hamcrest-core-1.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/lib/junit-4.13.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/BeginObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/BooleanObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/CharacterObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/Environment.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/Error.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/ExtendedEnvironment.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/FloatObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/HashKey.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/HashObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/HashPair.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/IntegerObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/NullObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/Object.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/ObjectType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/ReturnValueObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/StringObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/object/Structure.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/InfixParseFn.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser$OperatorType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/Parser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$InfixTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$PrecedenceTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$PrefixTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$StatementsTestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest$TestCase.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/ParserTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/parser/PrefixParseFn.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/repl/Reader.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/repl/Repl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/token/Token.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Bisaya++/token/TokenType.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/parser/Parser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parser/ParserTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/token/TokenType.java" beforeDir="false" afterPath="$PROJECT_DIR$/token/TokenType.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,11 +28,22 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Aipse-bot"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Rienel/Interpreter.git",
+    "accountId": "0143d339-f8b4-4365-8824-7e0d212903b2"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="2uUWrSzDvXaVepP7du06Y1mXVNJ" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -161,6 +85,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
